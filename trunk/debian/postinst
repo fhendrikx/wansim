@@ -1,0 +1,36 @@
+#!/bin/sh
+######################################################################
+# WANsim by Ferry Hendrikx, (c) 2008
+# postinst script
+######################################################################
+set -e
+
+
+# add WANsim user
+
+adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim
+
+
+# add WANsim user to sudoers
+
+FILE="/etc/sudoers"
+
+if [ -w "${FILE}" ]; then
+    echo "wansim\tALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> ${FILE}
+fi
+
+
+# add WANsim init.d script
+
+if [ -x "/etc/init.d/wansim" ]; then
+	update-rc.d wansim start 10 2 3 4 5 . stop 60 0 . || exit $?
+fi
+
+
+# add WANsim configuration files
+
+cp -f /usr/share/doc/wansim/wansim.sample /var/lib/wansim/wansim.conf
+cp -f /usr/share/doc/wansim/interfaces.sample /var/lib/wansim/interfaces.conf
+
+
+exit 0
