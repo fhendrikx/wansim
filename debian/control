@@ -1,0 +1,17 @@
+Source: wansim
+Section: misc
+Priority: optional
+Maintainer: Ferry Hendrikx <ferry.hendrikx@gmail.com>
+Standards-Version: 3.6.1.0
+
+Package: wansim
+Architecture: all
+Depends: adduser, bridge-utils, iproute
+Recommends: ethtool
+Description: This package provides a simple, inline bridge that allows 
+ you to simulate a WAN connection. Simply ensure that your Linux box 
+ has 2 NICs and place it between your "local" and "remote" centres.
+ WANsim allows you to change the WAN speed (in kbit/s) and the latency 
+ (in ms) of the data passing over the simulated WAN connection. WANsim
+ will also allow you to introduce errors (such as packet corruption,
+ loss and duplication).
