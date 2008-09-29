@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 ######################################################################
 #
 # WANsim v1.2 by Ferry Hendrikx, (c) 2008
@@ -65,7 +65,7 @@ do_start () {
 
 	# set interfaces
 
-	if [ "$SETINTS" -eq 1 ]; then
+	if [ "${SETINTS}" -eq 1 ]; then
 		if [ -e "${PROG_ET}" ]; then
 			$PROG_ET -s ${IFACE0} autoneg ${IF0AUTONEG}
 			$PROG_ET -s ${IFACE0} speed ${IF0SPEED}
@@ -119,7 +119,7 @@ do_start () {
 	fi
 
 
-	# remove any filters
+	# disable any filters
 
 	if [ -d "/proc/sys/net/bridge" ]; then
 		for FILT in /proc/sys/net/bridge/bridge-nf-*; do

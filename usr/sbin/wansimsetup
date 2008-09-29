@@ -14,6 +14,7 @@ WANSIMHACK=1
 
 # bridge and tc check
 PROG_BR="/usr/sbin/brctl"
+PROG_IF="/sbin/ifconfig"
 PROG_TC="/sbin/tc"
 
 
@@ -334,10 +335,12 @@ do_information()
 
 		echo ""
 		echo "---------- ${IFACE0} ----------"
+		$PROG_IF ${IFACE0} | grep bytes | sed -e 's/^[ ]*//'
 		$PROG_TC -s qdisc ls dev ${IFACE0}
 
 		echo ""
 		echo "---------- ${IFACE1} ----------"
+		$PROG_IF ${IFACE1} | grep bytes | sed -e 's/^[ ]*//'
 		$PROG_TC -s qdisc ls dev ${IFACE1}
 
 		# key pressed?
