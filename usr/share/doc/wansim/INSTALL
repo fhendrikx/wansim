@@ -25,8 +25,8 @@ cp wansimsetup /usr/sbin/
 
 ### Step 4. Add WANsim default/sample configuration
 
-cp wansim.sample /var/lib/wansim/wansim.conf
-cp interfaces.sample /var/lib/wansim/interfaces.conf
+cp wansim.conf.sample /var/lib/wansim/wansim.conf
+cp interfaces.conf.sample /var/lib/wansim/interfaces.conf
 
 
 ### Step 5. Login as "wansim"
