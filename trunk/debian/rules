@@ -33,10 +33,11 @@ binary-indep: checkroot
 	$(install_file) debian/changelog debian/tmp/usr/share/doc/wansim/changelog.Debian
 	gzip -9v debian/tmp/usr/share/doc/wansim/*
 	$(install_file) debian/copyright debian/tmp/usr/share/doc/wansim/
-	$(install_file) usr/share/doc/wansim/* debian/tmp/usr/share/doc/wansim/
+	$(install_file) usr/share/doc/wansim/INSTALL debian/tmp/usr/share/doc/wansim/
+	$(install_file) usr/share/doc/wansim/README debian/tmp/usr/share/doc/wansim/
 
-	$(install_dir) debian/tmp/usr/share/doc/wansim/examples
-	$(install_file) usr/share/doc/wansim/examples/* debian/tmp/usr/share/doc/wansim/examples
+	$(install_dir) debian/tmp/usr/share/doc/wansim/examples/
+	$(install_file) usr/share/doc/wansim/examples/* debian/tmp/usr/share/doc/wansim/examples/
 
 	dpkg-gencontrol -pwansim
 
