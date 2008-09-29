@@ -3,7 +3,7 @@ INTRODUCTION
 
 WANsim is a simple, inline bridge that allows you to simulate a WAN
 connection. Simply ensure that your Linux box has 2 NICs and place
-it between your "local" and "remote" centres.
+it between your "local" and "remote" locations.
 
             +--------+
  Local -----| WANsim |----- Remote
@@ -25,7 +25,8 @@ Please install WANsim on your computer as detailed in the INSTALL
 document.
 
 Once installed, you can login as "wansim" and change the simulated
-WAN settings using the menu.
+WAN settings using the menu. Then, save your new configuration and
+either restart WANsim or reboot the computer.
 
 Your simulated WAN will be automatically started at boot time.
 
