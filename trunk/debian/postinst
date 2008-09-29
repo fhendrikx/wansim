@@ -29,8 +29,7 @@ fi
 
 # add WANsim configuration files
 
-cp -f /usr/share/doc/wansim/wansim.sample /var/lib/wansim/wansim.conf
-cp -f /usr/share/doc/wansim/interfaces.sample /var/lib/wansim/interfaces.conf
+cp -f /usr/share/doc/wansim/examples/* /var/lib/wansim/
 
 
 exit 0
