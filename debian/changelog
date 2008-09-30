@@ -1,3 +1,9 @@
+wansim (1.1-3) unstable; urgency=low
+
+  * Default burst speed changed to something more sensible
+
+ -- Ferry Hendrikx <ferry.hendrikx@gmail.com>  Tue, 30 Sep 2008 19:30:00 +1200
+
 wansim (1.1-2) unstable; urgency=low
 
   * Minor permissions fix
