@@ -8,7 +8,7 @@ set -e
 
 # add WANsim user
 
-adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim
+adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim || exit $?
 
 
 # add WANsim user to sudoers
@@ -29,7 +29,10 @@ fi
 
 # add WANsim configuration files
 
-cp -f /usr/share/doc/wansim/examples/* /var/lib/wansim/
+DEST="/var/lib/wansim"
+
+cp -f /usr/share/doc/wansim/examples/* ${DEST}/
+chown wansim:wansim ${DEST}/*
 
 
 exit 0
