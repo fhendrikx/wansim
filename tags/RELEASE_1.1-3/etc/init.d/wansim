@@ -1,0 +1,161 @@
+#!/bin/sh
+######################################################################
+#
+# WANsim v1.2 by Ferry Hendrikx, (c) 2008
+#
+######################################################################
+### BEGIN INIT INFO
+# Provides:          WANsim
+# Required-Start:
+# Required-Stop:
+# Default-Start:     S
+# Default-Stop:
+# Short-Description: Setup simulated WAN
+# Description:
+### END INIT INFO
+
+PATH=/sbin:/bin
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+
+# settings
+
+INTCONF="/var/lib/wansim/interfaces.conf"
+WANCONF="/var/lib/wansim/wansim.conf"
+SETINTS=0
+
+PROG_BR="/usr/sbin/brctl"
+PROG_ET="/usr/sbin/ethtool"
+PROG_IF="/sbin/ifconfig"
+PROG_TC="/sbin/tc"
+
+
+# sanity check
+
+if [ ! -e "${PROG_BR}" ]; then
+	exit 1
+fi
+
+if [ ! -e "${PROG_TC}" ]; then
+	exit 1
+fi
+
+
+# load configuration
+
+if [ -e "${WANCONF}" ]; then
+	. ${WANCONF}
+else
+	exit 1
+fi
+
+
+# load interface settings
+
+if [ -e "${INTCONF}" ]; then
+	. ${INTCONF}
+fi
+
+
+do_start () {
+	log_action_begin_msg "Starting WANsim"
+
+
+	# set interfaces
+
+	if [ "${SETINTS}" -eq 1 ]; then
+		if [ -e "${PROG_ET}" ]; then
+			$PROG_ET -s ${IFACE0} autoneg ${IF0AUTONEG}
+			$PROG_ET -s ${IFACE0} speed ${IF0SPEED}
+			$PROG_ET -s ${IFACE0} duplex ${IF0DUPLEX}
+
+			$PROG_ET -s ${IFACE1} autoneg ${IF1AUTONEG}
+			$PROG_ET -s ${IFACE1} speed ${IF1SPEED}
+			$PROG_ET -s ${IFACE1} duplex ${IF1DUPLEX}
+		fi
+	fi
+
+
+	# bring up interfaces
+
+	$PROG_IF ${IFACE0} 0.0.0.0 mtu ${MTUSIZE} up
+	$PROG_IF ${IFACE1} 0.0.0.0 mtu ${MTUSIZE} up
+
+	$PROG_BR addbr ${BRIDGE}
+	$PROG_BR addif ${BRIDGE} ${IFACE0}
+	$PROG_BR addif ${BRIDGE} ${IFACE1}
+	$PROG_BR stp   ${BRIDGE} off
+
+	if [ "$BRIDGEIP" != "0.0.0.0" ]; then
+		$PROG_IF ${BRIDGE} ${BRIDGEIP} 255.255.255.0
+	fi
+
+	$PROG_IF ${BRIDGE} up
+
+
+	# settings for iface0
+
+	$PROG_TC qdisc add dev ${IFACE0} root handle 10:0 netem delay ${LATENCY}ms ${VARIATION}ms 50%
+	$PROG_TC qdisc add dev ${IFACE0} parent 10:1 handle 11: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency 100ms
+
+	if [ "$PKTLOSS" -gt 0 -o "$PKTDUPL" -gt 0 -o "$PKTCORR" -gt 0 ]; then
+		$PROG_TC qdisc add dev ${IFACE0} parent 11:1 handle 12: netem loss ${PKTLOSS}%
+		$PROG_TC qdisc add dev ${IFACE0} parent 12:1 handle 13: netem duplicate ${PKTDUPL}%
+		$PROG_TC qdisc add dev ${IFACE0} parent 13:1 handle 14: netem corrupt ${PKTCORR}%
+	fi
+
+
+	# settings for iface1
+
+	$PROG_TC qdisc add dev ${IFACE1} root handle 20:0 netem delay 0ms
+	$PROG_TC qdisc add dev ${IFACE1} parent 20:1 handle 21: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency 100ms
+
+	if [ "$PKTLOSS" -gt 0 -o "$PKTDUPL" -gt 0 -o "$PKTCORR" -gt 0 ]; then
+		$PROG_TC qdisc add dev ${IFACE1} parent 21:1 handle 22: netem loss ${PKTLOSS}%
+		$PROG_TC qdisc add dev ${IFACE1} parent 22:1 handle 23: netem duplicate ${PKTDUPL}%
+		$PROG_TC qdisc add dev ${IFACE1} parent 23:1 handle 24: netem corrupt ${PKTCORR}%
+	fi
+
+
+	# disable any filters
+
+	if [ -d "/proc/sys/net/bridge" ]; then
+		for FILT in /proc/sys/net/bridge/bridge-nf-*; do
+			echo "0" > ${FILT}
+		done
+	fi
+
+        log_action_end_msg 0
+}
+
+do_stop () {
+	log_action_begin_msg "Stopping WANsim"
+
+	$PROG_TC qdisc del dev ${IFACE0} root
+	$PROG_TC qdisc del dev ${IFACE1} root
+
+	$PROG_IF ${BRIDGE} down
+	$PROG_BR delbr ${BRIDGE}
+
+        log_action_end_msg 0
+}
+
+
+case "$1" in
+  start|"")
+	do_start
+	;;
+  restart|reload|force-reload)
+	do_stop
+	do_start
+	;;
+  stop)
+	do_stop
+	;;
+  *)
+	echo "Usage: wansim [start|restart|realod|stop]" >&2
+	exit 3
+	;;
+esac

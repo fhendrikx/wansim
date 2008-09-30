@@ -1,0 +1,463 @@
+#!/bin/bash
+############################################################
+#
+# WANsim Setup v1.2 by Ferry Hendrikx, (c) 2008
+#
+############################################################
+
+# where to find my configuration file
+WANSIMCONF="/var/lib/wansim/wansim.conf"
+WANSIMVERS="v1.2"
+
+# make burstable bucket larger than normal
+BURST_HACK=1
+
+# bridge and tc check
+PROG_BR="/usr/sbin/brctl"
+PROG_IF="/sbin/ifconfig"
+PROG_TC="/sbin/tc"
+
+
+############################################################
+# functions
+############################################################
+
+show_text()
+{
+	clear
+	echo "##################################################"
+
+	for str in "$@"; do
+		echo "# $str";
+	done
+
+	echo "##################################################"
+}
+
+show_diag()
+{
+	str=$1
+
+	echo ""
+	echo -n "$str "
+}
+
+user_read()
+{
+	local val
+	read val
+
+	[ -n "$val" ] && eval $1=\$val
+}
+
+user_wait()
+{
+	echo ""
+	echo "$1"
+
+	read
+}
+
+do_sanity_check()
+{
+	if [ ! -e ${PROG_BR} ]; then
+		show_text \
+			"Warning: $PROG_BR is missing" \
+            "" \
+            "WANsim will not work as expected" \
+			"" \
+			"Please install the bridge-utils package"
+
+		user_wait "Press any key"
+	fi
+
+	if [ ! -e ${PROG_TC} ]; then
+		show_text \
+			"Warning: $PROG_TC is missing" \
+            "" \
+            "WANsim will not work as expected" \
+			"" \
+			"Please install the iproute or iproute2 package"
+
+		user_wait "Press any key"
+	fi
+}
+
+do_conf_load()
+{
+	if [ -e "${WANSIMCONF}" ]; then
+		. ${WANSIMCONF}
+	else
+        # set some default values
+
+		BRIDGE=br0
+		BRIDGEIP=0.0.0.0
+		IFACE0=eth0
+		IFACE1=eth1
+		MTUSIZE=1500
+		BANDWIDTH=3072
+		BURST=4500
+		LATENCY=30
+		VARIATION=1
+		PKTLOSS=0
+		PKTDUPL=0
+		PKTCORR=0
+	fi
+}
+
+do_conf_save()
+{
+	rm -f ${WANSIMCONF}
+	touch ${WANSIMCONF}
+
+	echo "BRIDGE=${BRIDGE}" >> ${WANSIMCONF}
+	echo "BRIDGEIP=${BRIDGEIP}" >> ${WANSIMCONF}
+	echo "IFACE0=${IFACE0}" >> ${WANSIMCONF}
+	echo "IFACE1=${IFACE1}" >> ${WANSIMCONF}
+	echo "MTUSIZE=${MTUSIZE}" >> ${WANSIMCONF}
+	echo "BANDWIDTH=${BANDWIDTH}" >> ${WANSIMCONF}
+	echo "BURST=${BURST}" >> ${WANSIMCONF}
+	echo "LATENCY=${LATENCY}" >> ${WANSIMCONF}
+	echo "VARIATION=${VARIATION}" >> ${WANSIMCONF}
+	echo "PKTLOSS=${PKTLOSS}" >> ${WANSIMCONF}
+	echo "PKTDUPL=${PKTDUPL}" >> ${WANSIMCONF}
+	echo "PKTCORR=${PKTCORR}" >> ${WANSIMCONF}
+
+	# dialogue
+	show_text "Configuration saved"
+	user_wait "Press any key"
+}
+
+do_set_interface()
+{
+	show_text "Interface (device name)"
+	show_diag ">"
+	user_read temp
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	fi
+}
+
+do_set_address()
+{
+	temp=
+
+	# dialogue
+	show_text "Bridge IP address"
+	show_diag ">"
+	user_read temp
+
+	temp=`echo $temp | tr -d '[:alpha:][:space:][:cntrl:]'`
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	else
+		eval $1=\$BRIDGEIP
+	fi
+}
+
+do_set_mtusize()
+{
+	temp=
+
+	# dialogue
+	show_text "MTU size (bytes)"
+	show_diag ">"
+	user_read temp
+
+	temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	else
+		eval $1=\$MTUSIZE
+	fi
+}
+
+do_set_bandwidth()
+{
+	temp=
+
+	# dialogue
+	show_text "Bandwidth (kbit/s)"
+	show_diag ">"
+	user_read temp
+
+	temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	else
+		eval $1=\$BANDWIDTH
+	fi
+}
+
+do_set_burst()
+{
+	# bandwidth in byte/s = kbit/s * 1000 / 8
+	# divide by clockspeed (Hz)
+	let "buff=($BANDWIDTH * 125) / 100"
+
+	# ensure burst is always a multiple of MTU size
+	let "temp=$buff % $MTUSIZE"
+	if [ "$temp" -gt 0 ]; then
+		let "buff=$buff + ($MTUSIZE - $temp)"
+	fi
+
+	# ensure burst is atleast MTU size
+	if [ "$buff" -lt "$MTUSIZE" ]; then
+		buff=$MTUSIZE
+	fi
+
+	# burst size hack
+	if [ "$BURST_HACK" -eq 1 ]; then
+		# this hack proved somewhat useful during my
+		# testing, so going to leave it in for now.
+
+		let "buff=$buff * 8"
+	fi
+
+	eval $1=\$buff
+}
+
+do_set_latency()
+{
+	temp=
+
+	# dialogue
+	show_text "Latency (ms)"
+	show_diag ">"
+	user_read temp
+
+	temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	else
+		eval $1=\$LATENCY
+	fi
+}
+
+do_set_variation()
+{
+	temp=
+
+	# recommendation
+	let "recc=$LATENCY / 10"
+	if [ "$recc" -gt 1 ]; then
+		let "recc=$recc - 1"
+	fi
+
+	# dialogue
+	show_text "Variation (ms)" "(Recommended maximum variation of $recc ms)"
+	show_diag ">"
+	user_read temp
+
+	temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	else
+		eval $1=\$VARIATION
+	fi
+}
+
+do_set_packet_loss()
+{
+	temp=
+
+	# dialogue
+	show_text "Packet Loss %" "(Minimum percentage is 0.0000001)"
+	show_diag ">"
+	user_read temp
+
+	temp=`echo $temp | tr -d '[:alpha:][:space:][:cntrl:]'`
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	else
+		eval $1=\$PKTLOSS
+	fi
+}
+
+do_set_packet_duplication()
+{
+	temp=
+
+	# dialogue
+	show_text "Packet Duplication %" "(Minimum percentage is 0.0000001)"
+	show_diag ">"
+	user_read temp
+
+	temp=`echo $temp | tr -d '[:alpha:][:space:][:cntrl:]'`
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	else
+		eval $1=\$PKTDUPL
+	fi
+}
+
+do_set_packet_corruption()
+{
+	temp=
+
+	# dialogue
+	show_text "Packet Corruption %" "(Minimum percentage is 0.0000001)"
+	show_diag ">"
+	user_read temp
+
+	temp=`echo $temp | tr -d '[:alpha:][:space:][:cntrl:]'`
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	else
+		eval $1=\$PKTCORR
+	fi
+}
+
+do_restart()
+{
+	sudo /usr/sbin/invoke-rc.d wansim restart
+
+	user_wait "Press any key"
+}
+
+do_about()
+{
+	show_text \
+		"" \
+		"WANsim ${WANSIMVERS} by Ferry Hendrikx (c) 2008" \
+		""
+
+	user_wait "Press any key"
+}
+
+do_information()
+{
+	done=0
+
+	while [ $done -eq 0 ]; do
+		show_text "WAN Information" "(Press q and then enter to quit)"
+
+		echo ""
+		echo "---------- ${IFACE0} ----------"
+		$PROG_IF ${IFACE0} | grep bytes | sed -e 's/^[ ]*//'
+		$PROG_TC -s qdisc ls dev ${IFACE0}
+
+		echo ""
+		echo "---------- ${IFACE1} ----------"
+		$PROG_IF ${IFACE1} | grep bytes | sed -e 's/^[ ]*//'
+		$PROG_TC -s qdisc ls dev ${IFACE1}
+
+		# key pressed?
+
+		temp=
+		read -t 8 temp
+		if [ ! -z "$temp" ]; then
+			done=1
+		fi
+	done
+}
+
+
+############################################################
+# main
+############################################################
+
+# start
+
+do_conf_load
+do_sanity_check
+
+
+# main menu
+
+quit=0
+
+while [ $quit -eq 0 ]; do
+	show_text \
+		"(0) Interface 0 ($IFACE0)" \
+		"(1) Interface 1 ($IFACE1)" \
+		"(2) Bridge ($BRIDGE)" \
+		"(3) IP address ($BRIDGEIP)" \
+		"(m) MTU size ($MTUSIZE bytes)" \
+		"" \
+		"(b) WAN Bandwidth ($BANDWIDTH kbit/s)" \
+		"(l) WAN Latency ($LATENCY ms)" \
+		"(v) WAN Variation ($VARIATION ms)" \
+		"(L) WAN Packet Loss ($PKTLOSS %)" \
+		"(D) WAN Packet Duplication ($PKTDUPL %)" \
+		"(C) WAN Packet Corruption ($PKTCORR %)" \
+		"(i) WAN Information" \
+		"" \
+		"(d) WANsim Configuration Load" \
+		"(s) WANsim Configuration Save" \
+		"(r) WANsim Restart" \
+		"(a) WANsim About" \
+		"(q) Quit / Logout"
+	show_diag "Option?"
+	opt=
+	user_read opt
+
+	case "$opt" in
+		0)
+			do_set_interface IFACE0
+			;;
+		1)
+			do_set_interface IFACE1
+			;;
+		2)
+			do_set_interface BRIDGE
+			;;
+		3)
+			do_set_address BRIDGEIP
+			;;
+		m|M)
+			do_set_mtusize MTUSIZE
+			do_set_burst BURST
+			;;
+		b)
+			do_set_bandwidth BANDWIDTH
+			do_set_burst BURST
+			;;
+		l)
+			do_set_latency LATENCY
+			do_set_variation VARIATION
+			;;
+		v)
+			do_set_variation VARIATION
+			;;
+		L)
+			do_set_packet_loss PKTLOSS
+			;;
+		D)
+			do_set_packet_duplication PKTDUPL
+			;;
+		C)
+			do_set_packet_corruption PKTCORR
+			;;
+		i)
+			do_information
+			;;
+		d)
+			do_conf_load
+			;;
+		s|w)
+			do_set_burst BURST
+			do_conf_save
+			;;
+		r|R)
+			do_restart
+			;;
+		a|A)
+			do_about
+			;;
+		q|Q|x|X)
+			quit=1
+			;;
+		*)
+			;;
+	esac
+done
