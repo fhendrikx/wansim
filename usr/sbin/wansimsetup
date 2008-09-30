@@ -9,8 +9,8 @@
 WANSIMCONF="/var/lib/wansim/wansim.conf"
 WANSIMVERS="v1.2"
 
-# make burstable bucket 8x larger than normal
-WANSIMHACK=1
+# make burstable bucket larger than normal
+BURST_HACK=1
 
 # bridge and tc check
 PROG_BR="/usr/sbin/brctl"
@@ -63,8 +63,10 @@ do_sanity_check()
 	if [ ! -e ${PROG_BR} ]; then
 		show_text \
 			"Warning: $PROG_BR is missing" \
+            "" \
+            "WANsim will not work as expected" \
 			"" \
-			"Please install bridge-utils"
+			"Please install the bridge-utils package"
 
 		user_wait "Press any key"
 	fi
@@ -72,8 +74,10 @@ do_sanity_check()
 	if [ ! -e ${PROG_TC} ]; then
 		show_text \
 			"Warning: $PROG_TC is missing" \
+            "" \
+            "WANsim will not work as expected" \
 			"" \
-			"Please install iproute or iproute2"
+			"Please install the iproute or iproute2 package"
 
 		user_wait "Press any key"
 	fi
@@ -84,6 +88,8 @@ do_conf_load()
 	if [ -e "${WANSIMCONF}" ]; then
 		. ${WANSIMCONF}
 	else
+        # set some default values
+
 		BRIDGE=br0
 		BRIDGEIP=0.0.0.0
 		IFACE0=eth0
@@ -204,8 +210,8 @@ do_set_burst()
 		buff=$MTUSIZE
 	fi
 
-	# buffer size hack
-	if [ "$WANSIMHACK" -eq 1 ]; then
+	# burst size hack
+	if [ "$BURST_HACK" -eq 1 ]; then
 		# this hack proved somewhat useful during my
 		# testing, so going to leave it in for now.
 
@@ -314,6 +320,8 @@ do_set_packet_corruption()
 do_restart()
 {
 	sudo /usr/sbin/invoke-rc.d wansim restart
+
+	user_wait "Press any key"
 }
 
 do_about()
