@@ -7,24 +7,24 @@ WANsim was written on an Ubuntu Linux server and the documentation below assumes
 
 WANsim requires the following:
 
-* Standard PC or server with at least 2 NICs (network cards)
-* Ubuntu or Debian Linux installed
+  * Standard PC or server with at least 2 NICs (network cards)
+  * Ubuntu or Debian Linux installed
 
 The following packages are required:
 
-* Package: bridge-utils
-* Package: iproute
-* Package: net-tools
-* Package: sudoers
+  * bridge-utils
+  * iproute
+  * net-tools
+  * sudoers
 
 
 == Automatic installation ==
 
 Use this installation method if you are using Ubuntu or Debian Linux.
 
-* Download the debian package
-* Install the debian package: `dpkg -i wansim.deb`
-* Set the password for the wansim user: `passwd wansim`
+  * Download the debian package
+  * Install the debian package: `dpkg -i wansim.deb`
+  * Set the password for the wansim user: `passwd wansim`
 
 
 == Manual ==
