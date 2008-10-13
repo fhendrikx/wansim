@@ -1,9 +1,7 @@
-#summary Installation Requirements
 #labels Phase-Deploy
-
 = Requirements =
 
-WANsim was written on an Ubuntu Linux server and the documentation on this site assumes that this is the case. However, WANsim should work correctly on any Linux server if you have some basic knowledge of Unix/Linux administration.
+WANsim was written on an [http://www.ubuntu.com Ubuntu] Linux server and the documentation on this site assumes that this is the case. However, WANsim should work correctly on any Linux server if you have some basic knowledge of Unix/Linux administration.
 
 WANsim requires the following:
 
