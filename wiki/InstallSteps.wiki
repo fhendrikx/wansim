@@ -1,0 +1,61 @@
+#summary Installation steps
+#labels Phase-Deploy
+
+= Installation =
+
+WANsim was written on an Ubuntu Linux server and the documentation below assumes that this is the case. However, WANsim should work correctly on any Linux server if you have some basic knowledge of Unix/Linux administration.
+
+WANsim requires the following:
+
+* Standard PC or server with at least 2 NICs (network cards)
+* Ubuntu or Debian Linux installed
+
+The following packages are required:
+
+* Package: bridge-utils
+* Package: iproute
+* Package: net-tools
+* Package: sudoers
+
+
+== Automatic installation ==
+
+Use this installation method if you are using Ubuntu or Debian Linux.
+
+* Download the debian package
+* Install the debian package: `dpkg -i wansim.deb`
+* Set the password for the wansim user: `passwd wansim`
+
+
+== Manual ==
+
+This installation method should work for any Linux variant.
+
+=== Step 1: Add WANsim user ===
+
+`adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim`
+
+`passwd wansim`
+
+`echo "wansim ALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> /etc/sudoers
+
+
+=== Step 2: Add WANsim init.d task ===
+
+`cp wansim /etc/init.d`
+
+`update-rc.d wansim start 10 2 3 4 5 . stop 60 0`
+
+
+=== Step 3: Add WANsim setup script ===
+
+cp wansimsetup /usr/sbin/
+
+
+=== Step 4: Add WANsim default configuration ===
+
+cp wansim.conf.sample /var/lib/wansim/wansim.conf
+cp interfaces.conf.sample /var/lib/wansim/interfaces.conf
+
+
+=== Step 5: Login as wansim ===
