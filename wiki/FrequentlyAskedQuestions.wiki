@@ -1,20 +1,20 @@
 #summary Frequently Asked Questions
-#labels Phase-Deploy,Featured
+#labels Phase-Deploy
 
 = FAQ =
 
-== Why did you call it WANsim? ==
+*Why did you call it WANsim?*
 
 I wanted a simple, easy to remember name. Obviously it needed to feature the word *WAN*. Simulation came about because I was simulating a real WAN. Of course, the term I should really have used is _emulation_. 
 
 Oh well, it's too late now.
 
 
-== Why write the whole thing as a bash script? ==
+*Why write the whole thing as a bash script?*
 
 Why not? I could have used Perl, but bash is more widely available, especially on resource limited boxes.
 
 
-== How do I set my interfaces to _insert settings here_? ==
+*How do I set my interfaces to _insert settings here_?*
 
 Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what you require. You will also need to make `SETINTS=1`. These interface settings will be applied at every boot. Settings `SETINTS=0` will leave the interfaces unchanged. This is the default behaviour. 
