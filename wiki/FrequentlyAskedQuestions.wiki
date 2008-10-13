@@ -1,6 +1,4 @@
-#summary Frequently Asked Questions
 #labels Phase-Deploy
-
 = FAQ =
 
 *Why did you call it WANsim?*
