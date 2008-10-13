@@ -1,6 +1,4 @@
-#summary Installation steps
 #labels Phase-Deploy
-
 = Installation =
 
 WANsim can be installed either automatically or manually.
