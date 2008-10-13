@@ -55,6 +55,7 @@ This installation method should work for any Linux variant.
 === Step 4: Add WANsim default configuration ===
 
 `cp wansim.conf.sample /var/lib/wansim/wansim.conf`
+
 `cp interfaces.conf.sample /var/lib/wansim/interfaces.conf`
 
 
