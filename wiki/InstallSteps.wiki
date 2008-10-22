@@ -6,24 +6,33 @@ WANsim can be installed either automatically or manually.
 
 == Automatic installation ==
 
-Use this installation method if you are using Ubuntu or Debian Linux.
+Use this installation method if you are using Ubuntu or Debian Linux. You will need to download the WANsim debian package. 
 
-  * Download the debian package
-  * Install the debian package:
+*Step 1: Install the debian package*
 
 `dpkg -i wansim.deb`
 
-  * Set the password for the wansim user: 
+*Step 2: Set the password for the wansim user*
 
 `passwd wansim`
 
+*Step 3: Login as wansim*
+
+You can login as `wansim` via either:
+  * Console
+  * SSH to the host
 
 
 == Manual installation ==
 
-This installation method should work for any Linux variant.
+This installation method should work for any Linux variant. You will need to download the WANsim source code.
 
-*Step 1: Add WANsim user*
+*Step 1: Unpack the source code*
+
+`tar zxf WANsim.tar.gz`
+
+
+*Step 2: Add WANsim user*
 
 `adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim`
 
@@ -32,26 +41,26 @@ This installation method should work for any Linux variant.
 `echo "wansim ALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> /etc/sudoers`
 
 
-*Step 2: Add WANsim init.d task*
+*Step 3: Add WANsim init.d task*
 
 `cp wansim /etc/init.d`
 
 `update-rc.d wansim start 10 2 3 4 5 . stop 60 0`
 
 
-*Step 3: Add WANsim setup script*
+*Step 4: Add WANsim setup script*
 
 `cp wansimsetup /usr/sbin/`
 
 
-*Step 4: Add WANsim default configuration*
+*Step 5: Add WANsim default configuration*
 
 `cp wansim.conf.sample /var/lib/wansim/wansim.conf`
 
 `cp interfaces.conf.sample /var/lib/wansim/interfaces.conf`
 
 
-*Step 5: Login as wansim*
+*Step 6: Login as wansim*
 
 You can login as `wansim` via either:
   * Console
