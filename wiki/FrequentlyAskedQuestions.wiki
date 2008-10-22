@@ -5,7 +5,7 @@
 
 I wanted a simple, easy to remember name. Obviously it needed to feature the word *WAN*. Simulation came about because I was simulating a real WAN. Of course, the term I should really have used is _emulation_. 
 
-Oh well, it's too late now.
+Unfortunately, it's a little late to change it now.
 
 
 *Why write the whole thing as a bash script?*
@@ -15,6 +15,6 @@ Why not? I could have used Perl, but bash is more widely available, especially o
 
 *How do I set my interfaces to 10/100/1000, Half/Full Duplex, etc?*
 
-Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what you require. You will also need to make `SETINTS=1`. These interface settings will be applied at every boot. 
+Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what you require. You will also need to make `SETINTS=1`. These interface settings will be applied at every boot by the wansim init.d script. 
 
 Setting `SETINTS=0` will leave the interfaces unchanged. This is the default behaviour. 
