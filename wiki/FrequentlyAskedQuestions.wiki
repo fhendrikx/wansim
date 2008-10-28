@@ -18,3 +18,8 @@ Why not? I could have used Perl, but bash is more widely available, especially o
 Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what you require. You will also need to make `SETINTS=1`. These interface settings will be applied at every boot by the wansim init.d script. 
 
 Setting `SETINTS=0` will leave the interfaces unchanged. This is the default behaviour. 
+
+
+*What network cards can I use with WANsim?*
+
+You should be able to use any standard network card that can be put into _promiscuous mode_. This will unfortunately rule out many wireless network cards as they don't interact nicely with the kernel bridging code (it requires promiscuous mode).
