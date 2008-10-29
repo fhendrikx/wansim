@@ -1,7 +1,7 @@
 #!/bin/sh
 ######################################################################
 #
-# WANsim v1.2 by Ferry Hendrikx, (c) 2008
+# WANsim v1.3 by Ferry Hendrikx, (c) 2008
 #
 ######################################################################
 ### BEGIN INIT INFO
@@ -36,40 +36,40 @@ PROG_RT="/sbin/route"
 # sanity check
 
 if [ ! -e "${PROG_BR}" ]; then
-	exit 1
+    exit 1
 fi
 
 if [ ! -e "${PROG_TC}" ]; then
-	exit 1
+    exit 1
 fi
 
 if [ ! -e "${PROG_RT}" ]; then
-	exit 1
+    exit 1
 fi
 
 
 # load configuration
 
 if [ -e "${WANCONF}" ]; then
-	. ${WANCONF}
+    . ${WANCONF}
 else
-	exit 1
+    exit 1
 fi
 
 
 # load interface settings
 
 if [ -e "${INTCONF}" ]; then
-	. ${INTCONF}
+    . ${INTCONF}
 fi
 
 
 do_start () {
-	log_action_begin_msg "Starting WANsim"
+    log_action_begin_msg "Starting WANsim"
 
-	# enable kernel routing
+    # enable kernel routing
 
-	echo "1" > /proc/sys/net/ipv4/ip_forward
+    echo "1" > /proc/sys/net/ipv4/ip_forward
 
     for DEV in ${IFACE0} ${IFACE1}
     do
@@ -77,88 +77,88 @@ do_start () {
     done
 
 
-	# set interfaces
+    # set interfaces
 
-	if [ "${SETINTS}" -eq 1 ]; then
-		if [ -e "${PROG_ET}" ]; then
-			$PROG_ET -s ${IFACE0} autoneg ${IF0AUTONEG}
-			$PROG_ET -s ${IFACE0} speed ${IF0SPEED}
-			$PROG_ET -s ${IFACE0} duplex ${IF0DUPLEX}
+    if [ "${SETINTS}" -eq 1 ]; then
+        if [ -e "${PROG_ET}" ]; then
+            $PROG_ET -s ${IFACE0} autoneg ${IF0AUTONEG}
+            $PROG_ET -s ${IFACE0} speed ${IF0SPEED}
+            $PROG_ET -s ${IFACE0} duplex ${IF0DUPLEX}
 
-			$PROG_ET -s ${IFACE1} autoneg ${IF1AUTONEG}
-			$PROG_ET -s ${IFACE1} speed ${IF1SPEED}
-			$PROG_ET -s ${IFACE1} duplex ${IF1DUPLEX}
-		fi
-	fi
+            $PROG_ET -s ${IFACE1} autoneg ${IF1AUTONEG}
+            $PROG_ET -s ${IFACE1} speed ${IF1SPEED}
+            $PROG_ET -s ${IFACE1} duplex ${IF1DUPLEX}
+        fi
+    fi
 
 
-	# bring down interfaces
+    # bring down interfaces
 
     $PROG_IF ${IFACE0} down
     $PROG_IF ${IFACE1} down
 
 
-	# bring up interfaces
+    # bring up interfaces
 
-	$PROG_IF ${IFACE0} 0.0.0.0 mtu ${MTUSIZE} up
-	$PROG_IF ${IFACE1} 0.0.0.0 mtu ${MTUSIZE} up
+    $PROG_IF ${IFACE0} 0.0.0.0 mtu ${MTUSIZE} up
+    $PROG_IF ${IFACE1} 0.0.0.0 mtu ${MTUSIZE} up
 
-	$PROG_BR addbr ${BRIDGE}
-	$PROG_BR addif ${BRIDGE} ${IFACE0}
-	$PROG_BR addif ${BRIDGE} ${IFACE1}
-	$PROG_BR stp   ${BRIDGE} off
+    $PROG_BR addbr ${BRIDGE}
+    $PROG_BR addif ${BRIDGE} ${IFACE0}
+    $PROG_BR addif ${BRIDGE} ${IFACE1}
+    $PROG_BR stp   ${BRIDGE} off
 
-	if [ "$BRIDGEIP" != "0.0.0.0" ]; then
+    if [ "$BRIDGEIP" != "0.0.0.0" ]; then
         $PROG_IF ${BRIDGE} ${BRIDGEIP} netmask 255.255.255.0
         $PROG_RT add default gw ${BRIDGEGW}
-	fi
+    fi
 
-	$PROG_IF ${BRIDGE} up
-
-
-	# settings for iface0
-
-	$PROG_TC qdisc add dev ${IFACE0} root handle 10:0 netem delay ${LATENCY}ms ${VARIATION}ms 50%
-	$PROG_TC qdisc add dev ${IFACE0} parent 10:1 handle 11: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency 100ms
-
-	if [ "$PKTLOSS" -gt 0 -o "$PKTDUPL" -gt 0 -o "$PKTCORR" -gt 0 ]; then
-		$PROG_TC qdisc add dev ${IFACE0} parent 11:1 handle 12: netem loss ${PKTLOSS}%
-		$PROG_TC qdisc add dev ${IFACE0} parent 12:1 handle 13: netem duplicate ${PKTDUPL}%
-		$PROG_TC qdisc add dev ${IFACE0} parent 13:1 handle 14: netem corrupt ${PKTCORR}%
-	fi
+    $PROG_IF ${BRIDGE} up
 
 
-	# settings for iface1
+    # settings for iface0
 
-	$PROG_TC qdisc add dev ${IFACE1} root handle 20:0 netem delay 0ms
-	$PROG_TC qdisc add dev ${IFACE1} parent 20:1 handle 21: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency 100ms
+    $PROG_TC qdisc add dev ${IFACE0} root handle 10:0 netem delay ${LATENCY}ms ${VARIATION}ms 50%
+    $PROG_TC qdisc add dev ${IFACE0} parent 10:1 handle 11: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency 100ms
 
-	if [ "$PKTLOSS" -gt 0 -o "$PKTDUPL" -gt 0 -o "$PKTCORR" -gt 0 ]; then
-		$PROG_TC qdisc add dev ${IFACE1} parent 21:1 handle 22: netem loss ${PKTLOSS}%
-		$PROG_TC qdisc add dev ${IFACE1} parent 22:1 handle 23: netem duplicate ${PKTDUPL}%
-		$PROG_TC qdisc add dev ${IFACE1} parent 23:1 handle 24: netem corrupt ${PKTCORR}%
-	fi
+    if [ "$PKTLOSS" -gt 0 -o "$PKTDUPL" -gt 0 -o "$PKTCORR" -gt 0 ]; then
+        $PROG_TC qdisc add dev ${IFACE0} parent 11:1 handle 12: netem loss ${PKTLOSS}%
+        $PROG_TC qdisc add dev ${IFACE0} parent 12:1 handle 13: netem duplicate ${PKTDUPL}%
+        $PROG_TC qdisc add dev ${IFACE0} parent 13:1 handle 14: netem corrupt ${PKTCORR}%
+    fi
 
 
-	# disable any filters
+    # settings for iface1
 
-	if [ -d "/proc/sys/net/bridge" ]; then
-		for FILT in /proc/sys/net/bridge/bridge-nf-*; do
-			echo "0" > ${FILT}
-		done
-	fi
+    $PROG_TC qdisc add dev ${IFACE1} root handle 20:0 netem delay 0ms
+    $PROG_TC qdisc add dev ${IFACE1} parent 20:1 handle 21: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency 100ms
+
+    if [ "$PKTLOSS" -gt 0 -o "$PKTDUPL" -gt 0 -o "$PKTCORR" -gt 0 ]; then
+        $PROG_TC qdisc add dev ${IFACE1} parent 21:1 handle 22: netem loss ${PKTLOSS}%
+        $PROG_TC qdisc add dev ${IFACE1} parent 22:1 handle 23: netem duplicate ${PKTDUPL}%
+        $PROG_TC qdisc add dev ${IFACE1} parent 23:1 handle 24: netem corrupt ${PKTCORR}%
+    fi
+
+
+    # disable any filters
+
+    if [ -d "/proc/sys/net/bridge" ]; then
+        for FILT in /proc/sys/net/bridge/bridge-nf-*; do
+            echo "0" > ${FILT}
+        done
+    fi
 
     log_action_end_msg 0
 }
 
 do_stop () {
-	log_action_begin_msg "Stopping WANsim"
+    log_action_begin_msg "Stopping WANsim"
 
-	$PROG_TC qdisc del dev ${IFACE0} root
-	$PROG_TC qdisc del dev ${IFACE1} root
+    $PROG_TC qdisc del dev ${IFACE0} root
+    $PROG_TC qdisc del dev ${IFACE1} root
 
-	$PROG_IF ${BRIDGE} down
-	$PROG_BR delbr ${BRIDGE}
+    $PROG_IF ${BRIDGE} down
+    $PROG_BR delbr ${BRIDGE}
 
     echo "0" > /proc/sys/net/ipv4/ip_forward
 
@@ -172,18 +172,18 @@ do_stop () {
 
 
 case "$1" in
-  start|"")
-	do_start
-	;;
-  restart|reload|force-reload)
-	do_stop
-	do_start
-	;;
-  stop)
-	do_stop
-	;;
-  *)
-	echo "Usage: wansim [start|restart|realod|stop]" >&2
-	exit 3
-	;;
+    start|"")
+        do_start
+    ;;
+    restart|reload|force-reload)
+        do_stop
+        do_start
+    ;;
+    stop)
+        do_stop
+    ;;
+    *)
+        echo "Usage: wansim [start|restart|realod|stop]" >&2
+        exit 3
+    ;;
 esac
