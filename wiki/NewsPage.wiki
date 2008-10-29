@@ -1,0 +1,15 @@
+#labels Phase-Support
+= News =
+
+*Oct 29th 2008*
+
+WANsim Release 1.3-1 is out.
+
+This release includes a patch from Philippe Lombard and some minor fixes.
+
+
+*Sep 30th 2008*
+
+WANsim Release 1.1-3 is out.
+
+This is the first real release of WANsim. 
