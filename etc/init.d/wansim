@@ -30,6 +30,7 @@ PROG_BR="/usr/sbin/brctl"
 PROG_ET="/usr/sbin/ethtool"
 PROG_IF="/sbin/ifconfig"
 PROG_TC="/sbin/tc"
+PROG_RT="/sbin/route"
 
 
 # sanity check
@@ -39,6 +40,10 @@ if [ ! -e "${PROG_BR}" ]; then
 fi
 
 if [ ! -e "${PROG_TC}" ]; then
+	exit 1
+fi
+
+if [ ! -e "${PROG_RT}" ]; then
 	exit 1
 fi
 
@@ -62,6 +67,15 @@ fi
 do_start () {
 	log_action_begin_msg "Starting WANsim"
 
+	# enable kernel routing
+
+	echo "1" > /proc/sys/net/ipv4/ip_forward
+
+    for DEV in ${IFACE0} ${IFACE1}
+    do
+        echo "1" > /proc/sys/net/ipv4/conf/${DEV}/proxy_arp
+    done
+
 
 	# set interfaces
 
@@ -78,6 +92,12 @@ do_start () {
 	fi
 
 
+	# bring down interfaces
+
+    $PROG_IF ${IFACE0} down
+    $PROG_IF ${IFACE1} down
+
+
 	# bring up interfaces
 
 	$PROG_IF ${IFACE0} 0.0.0.0 mtu ${MTUSIZE} up
@@ -89,7 +109,8 @@ do_start () {
 	$PROG_BR stp   ${BRIDGE} off
 
 	if [ "$BRIDGEIP" != "0.0.0.0" ]; then
-		$PROG_IF ${BRIDGE} ${BRIDGEIP} 255.255.255.0
+        $PROG_IF ${BRIDGE} ${BRIDGEIP} netmask 255.255.255.0
+        $PROG_RT add default gw ${BRIDGEGW}
 	fi
 
 	$PROG_IF ${BRIDGE} up
@@ -127,7 +148,7 @@ do_start () {
 		done
 	fi
 
-        log_action_end_msg 0
+    log_action_end_msg 0
 }
 
 do_stop () {
@@ -139,7 +160,14 @@ do_stop () {
 	$PROG_IF ${BRIDGE} down
 	$PROG_BR delbr ${BRIDGE}
 
-        log_action_end_msg 0
+    echo "0" > /proc/sys/net/ipv4/ip_forward
+
+    for DEV in ${IFACE0} ${IFACE1}
+    do
+        echo "0" > /proc/sys/net/ipv4/conf/${DEV}/proxy_arp
+    done
+
+    log_action_end_msg 0
 }
 
 

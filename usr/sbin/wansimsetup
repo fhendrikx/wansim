@@ -92,6 +92,7 @@ do_conf_load()
 
 		BRIDGE=br0
 		BRIDGEIP=0.0.0.0
+		BRIDGEGW=0.0.0.0
 		IFACE0=eth0
 		IFACE1=eth1
 		MTUSIZE=1500
@@ -112,6 +113,7 @@ do_conf_save()
 
 	echo "BRIDGE=${BRIDGE}" >> ${WANSIMCONF}
 	echo "BRIDGEIP=${BRIDGEIP}" >> ${WANSIMCONF}
+	echo "BRIDGEGW=${BRIDGEGW}" >> ${WANSIMCONF}
 	echo "IFACE0=${IFACE0}" >> ${WANSIMCONF}
 	echo "IFACE1=${IFACE1}" >> ${WANSIMCONF}
 	echo "MTUSIZE=${MTUSIZE}" >> ${WANSIMCONF}
@@ -154,6 +156,24 @@ do_set_address()
 		eval $1=\$temp
 	else
 		eval $1=\$BRIDGEIP
+	fi
+}
+
+do_set_gateway()
+{
+	temp=
+
+	# dialogue
+	show_text "Bridge default gateway (IP address)"
+	show_diag ">"
+	user_read temp
+
+	temp=`echo $temp | tr -d '[:alpha:][:space:][:cntrl:]'`
+
+	if [ ! -z "$temp" ]; then
+		eval $1=\$temp
+	else
+		eval $1=\$BRIDGEGW
 	fi
 }
 
@@ -381,7 +401,8 @@ while [ $quit -eq 0 ]; do
 		"(0) Interface 0 ($IFACE0)" \
 		"(1) Interface 1 ($IFACE1)" \
 		"(2) Bridge ($BRIDGE)" \
-		"(3) IP address ($BRIDGEIP)" \
+		"(3) Bridge IP address ($BRIDGEIP)" \
+		"(4) Bridge Default gateway ($BRIDGEGW)" \
 		"(m) MTU size ($MTUSIZE bytes)" \
 		"" \
 		"(b) WAN Bandwidth ($BANDWIDTH kbit/s)" \
@@ -413,6 +434,9 @@ while [ $quit -eq 0 ]; do
 			;;
 		3)
 			do_set_address BRIDGEIP
+			;;
+		4)
+			do_set_gateway BRIDGEGW
 			;;
 		m|M)
 			do_set_mtusize MTUSIZE
