@@ -1,4 +1,4 @@
-#labels Phase-Support
+#labels Phase-Support,Featured
 = News =
 
 *Oct 29th 2008*
