@@ -67,15 +67,6 @@ fi
 do_start () {
     log_action_begin_msg "Starting WANsim"
 
-    # enable kernel routing
-
-    echo "1" > /proc/sys/net/ipv4/ip_forward
-
-    for DEV in ${IFACE0} ${IFACE1}
-    do
-        echo "1" > /proc/sys/net/ipv4/conf/${DEV}/proxy_arp
-    done
-
 
     # set interfaces
 
@@ -159,13 +150,6 @@ do_stop () {
 
     $PROG_IF ${BRIDGE} down
     $PROG_BR delbr ${BRIDGE}
-
-    echo "0" > /proc/sys/net/ipv4/ip_forward
-
-    for DEV in ${IFACE0} ${IFACE1}
-    do
-        echo "0" > /proc/sys/net/ipv4/conf/${DEV}/proxy_arp
-    done
 
     log_action_end_msg 0
 }
