@@ -3,8 +3,11 @@
 
 *Oct 30th 2008*
 
-WANsim Release 1.3-1 has a bug. I'll be releasing an update soon. 
-In the meantime, WANsim Release 1.1-3 is sufficient for most users.
+WANsim Release 1.3-2 is out.
+
+This release includes some minor changes:
+  * Fixed a bug (relating to the user-supplied patch)
+  * Added missing variable in default configuration file
 
 
 *Oct 29th 2008*
@@ -15,6 +18,7 @@ This release includes a patch from Philippe Lombard and some minor fixes.
   * Configure a gateway
   * Minor change to init.d script
   * White space changes
+
 
 *Sep 29th 2008*
 
