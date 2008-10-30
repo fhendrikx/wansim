@@ -23,3 +23,8 @@ Setting `SETINTS=0` will leave the interfaces unchanged. This is the default beh
 *What network cards can I use with WANsim?*
 
 You should be able to use any standard network card that can be put into _promiscuous mode_. This will unfortunately rule out many wireless network cards as they don't interact nicely with the kernel bridging code (it requires promiscuous mode).
+
+
+*Do I really need sudoers installed?*
+
+Strictly speaking you don't actually need sudoers to be installed. However, the WANsim interface offers an option that allows you to restart the WANsim init.d script. For this to work, you need to be able to run init.d scripts. This can be done via either sudoers (my preferred option) or changing the permissions bits on the script. 
