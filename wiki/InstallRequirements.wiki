@@ -13,4 +13,7 @@ The following packages are required:
   * bridge-utils
   * iproute
   * net-tools
+
+The following packages are optional (but useful):
+
   * sudoers
