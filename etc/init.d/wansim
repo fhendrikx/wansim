@@ -68,6 +68,18 @@ do_start () {
     log_action_begin_msg "Starting WANsim"
 
 
+    # bring down interfaces
+
+    $PROG_IF ${IFACE0} down
+    $PROG_IF ${IFACE1} down
+
+
+    # bring up interfaces
+
+    $PROG_IF ${IFACE0} 0.0.0.0 mtu ${MTUSIZE} up
+    $PROG_IF ${IFACE1} 0.0.0.0 mtu ${MTUSIZE} up
+
+
     # set interfaces
 
     if [ "${SETINTS}" -eq 1 ]; then
@@ -83,16 +95,7 @@ do_start () {
     fi
 
 
-    # bring down interfaces
-
-    $PROG_IF ${IFACE0} down
-    $PROG_IF ${IFACE1} down
-
-
-    # bring up interfaces
-
-    $PROG_IF ${IFACE0} 0.0.0.0 mtu ${MTUSIZE} up
-    $PROG_IF ${IFACE1} 0.0.0.0 mtu ${MTUSIZE} up
+    # bring up bridge
 
     $PROG_BR addbr ${BRIDGE}
     $PROG_BR addif ${BRIDGE} ${IFACE0}
