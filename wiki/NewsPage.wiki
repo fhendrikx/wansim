@@ -1,6 +1,11 @@
 #labels Phase-Support,Featured
 = News =
 
+*Dec 16th 2008*
+
+Work has started on the next release of WANsim. Expect the release to be ready early next year.
+
+
 *Oct 30th 2008*
 
 WANsim Release 1.3-2 is out.
