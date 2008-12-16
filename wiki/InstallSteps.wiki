@@ -38,14 +38,22 @@ This installation method should work for any Linux variant. You will need to dow
 
 `passwd wansim`
 
+If you have sudoers installed, this line allows the WANsim script to start/stop the WANsim init.d script:
+
 `echo "wansim ALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> /etc/sudoers`
+
+Please note that the tool _service_ can be used to accomplish the same goals on different systems. 
 
 
 *Step 3: Add WANsim init.d task*
 
 `cp wansim /etc/init.d`
 
+The following line assumes you are using Ubuntu or Debian:
+
 `update-rc.d wansim start 10 2 3 4 5 . stop 60 0`
+
+Please note that the tools _ntsysv_ and _chkconfig_ can be used to accomplish the same goals on different systems.
 
 
 *Step 4: Add WANsim setup script*
