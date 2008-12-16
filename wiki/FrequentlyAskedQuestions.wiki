@@ -19,7 +19,7 @@ Why not? I could have used Perl, but bash is more widely available, especially o
 
 *What kernel do I need?*
 
-You need a relatively recent Linux kernel. Any 2.6 series version should do the trick.
+You need a relatively recent Linux kernel. Any 2.6+ Linux kernel should do the trick.
 
 
 *What modules do I need to enable/compile in my kernel?*
