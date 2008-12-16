@@ -1,11 +1,11 @@
 = TODO =
 
-== WANsim init.d ==
+=== WANsim init.d ===
 
   * Add: Resilience to wansim init.d script (less Debian-like dependencies)
 
 
-== WANsim setup ==
+=== WANsim setup ===
 
   * Add: Show/Hide the (r)estart option if sudoers is/is not available
   * Fix: All IP address fields to use same editing function
@@ -13,12 +13,12 @@
   * Add: Resilience to wansim setup script (allow alternative init.d invoke methods)
 
 
-== WANsim packaging ==
+=== WANsim packaging ===
 
   * Fix: Debian packaging could be friendlier
   * Add: Generic install script
 
 
-== Other ==
+=== Other ===
 
   * Fix: Test package on other platforms (e.g. Voyager)
