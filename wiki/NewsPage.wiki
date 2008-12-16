@@ -3,7 +3,7 @@
 
 *Dec 16th 2008*
 
-Work has started on the next release of WANsim. Expect the release to be ready early next year.
+Work has started on the next release of WANsim. Expect the release to be ready early next year. My ToDo list has further information. 
 
 
 *Oct 30th 2008*
