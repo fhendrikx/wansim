@@ -1,6 +1,8 @@
 #labels Phase-Deploy
 = FAQ =
 
+== General ==
+
 *Why did you call it WANsim?*
 
 I wanted a simple, easy to remember name. Obviously it needed to feature the word *WAN*. Simulation came about because I was simulating a real WAN. Of course, the term I should really have used is _emulation_. 
@@ -8,9 +10,35 @@ I wanted a simple, easy to remember name. Obviously it needed to feature the wor
 Unfortunately, it's a little late to change it now.
 
 
+== Software ==
+
 *Why write the whole thing as a bash script?*
 
 Why not? I could have used Perl, but bash is more widely available, especially on resource limited boxes.
+
+
+*What kernel do I need?*
+
+You need a relatively recent Linux kernel. Any 2.6 series version should do the trick.
+
+
+*What modules do I need to enable/compile in my kernel?*
+
+You will need:
+  * 802.1d Ethernet Bridging module
+  * Network Emulation module (it's under QoS/Fair Queuing)
+
+
+*Do I really need sudoers installed?*
+
+Strictly speaking you don't actually need sudoers to be installed. However, the WANsim interface offers an option that allows you to restart the WANsim init.d script. For this to work, you need to be able to run init.d scripts. This can be done via either sudoers (my preferred option) or changing the permissions bits on the script (a potential security hole).
+
+
+== Hardware ==
+
+*What network cards can I use with WANsim?*
+
+You should be able to use any standard network card that can be put into _promiscuous mode_. This will unfortunately rule out many wireless network cards as they don't interact nicely with the kernel bridging code (it requires promiscuous mode).
 
 
 *How do I set my interfaces to 10/100/1000, Half/Full Duplex, etc?*
@@ -18,13 +46,3 @@ Why not? I could have used Perl, but bash is more widely available, especially o
 Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what you require. You will also need to make `SETINTS=1`. These interface settings will be applied at every boot by the wansim init.d script. 
 
 Setting `SETINTS=0` will leave the interfaces unchanged. This is the default behaviour. 
-
-
-*What network cards can I use with WANsim?*
-
-You should be able to use any standard network card that can be put into _promiscuous mode_. This will unfortunately rule out many wireless network cards as they don't interact nicely with the kernel bridging code (it requires promiscuous mode).
-
-
-*Do I really need sudoers installed?*
-
-Strictly speaking you don't actually need sudoers to be installed. However, the WANsim interface offers an option that allows you to restart the WANsim init.d script. For this to work, you need to be able to run init.d scripts. This can be done via either sudoers (my preferred option) or changing the permissions bits on the script. 
