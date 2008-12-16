@@ -1,15 +1,18 @@
 #labels Phase-Deploy
 = Requirements =
 
-WANsim was written on an [http://www.ubuntu.com Ubuntu] Linux server and the documentation on this site assumes that this is the case. However, WANsim should work correctly on any Linux server if you have some basic knowledge of Unix/Linux administration.
+WANsim was written on an [http://www.ubuntu.com Ubuntu] Linux server. Some of the documentation on this site assumes that this is the case. 
+
+However, WANsim should work correctly on any Linux server if you have some basic knowledge of Unix/Linux administration.
 
 WANsim requires the following:
 
   * Standard PC or server with at least 2 NICs (network cards)
-  * Ubuntu or Debian Linux installed
+  * Ubuntu or Debian Linux installed (with Linux 2.6 kernel)
 
 The following packages are required:
 
+  * bash
   * bridge-utils
   * iproute
   * net-tools
