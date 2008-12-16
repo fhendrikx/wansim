@@ -8,7 +8,7 @@ However, WANsim should work correctly on any Linux server if you have some basic
 WANsim requires the following:
 
   * Standard PC or server with at least 2 NICs (network cards)
-  * Ubuntu or Debian Linux installed (with Linux 2.6 kernel)
+  * Ubuntu or Debian Linux installed (with 2.6 Linux kernel)
 
 The following packages are required:
 
