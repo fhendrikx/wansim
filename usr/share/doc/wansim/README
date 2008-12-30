@@ -1,6 +1,15 @@
 
 INTRODUCTION
 
+This document is not being actively maintained.
+
+Please check the WANsim wiki at:
+
+  http://wansim.googlecode.com/
+
+for the latest information.
+
+
 WANsim is a simple, inline bridge that allows you to simulate a WAN
 connection. Simply ensure that your Linux box has 2 NICs and place
 it between your "local" and "remote" locations.
