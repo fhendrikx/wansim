@@ -1,13 +1,13 @@
 #!/bin/bash
 ############################################################
 #
-# WANsim Setup v1.3 by Ferry Hendrikx, (c) 2008
+# WANsim Setup v1.4 by Ferry Hendrikx, (c) 2008
 #
 ############################################################
 
 # where to find my configuration file
 WANSIMCONF="/var/lib/wansim/wansim.conf"
-WANSIMVERS="v1.3"
+WANSIMVERS="v1.4"
 
 # make burstable bucket larger than normal
 BURST_HACK=1
@@ -71,6 +71,15 @@ do_sanity_check()
         user_wait "Press any key"
     fi
 
+    if [ ! -e ${PROG_IF} ]; then
+        show_text \
+            "Warning: $PROG_IF is missing" \
+            "" \
+            "WANsim will not work as expected"
+
+        user_wait "Press any key"
+    fi
+
     if [ ! -e ${PROG_TC} ]; then
         show_text \
             "Warning: $PROG_TC is missing" \
@@ -109,24 +118,35 @@ do_conf_load()
 do_conf_save()
 {
     rm -f ${WANSIMCONF}
-    touch ${WANSIMCONF}
 
-    echo "BRIDGE=${BRIDGE}" >> ${WANSIMCONF}
-    echo "BRIDGEIP=${BRIDGEIP}" >> ${WANSIMCONF}
-    echo "BRIDGEGW=${BRIDGEGW}" >> ${WANSIMCONF}
-    echo "IFACE0=${IFACE0}" >> ${WANSIMCONF}
-    echo "IFACE1=${IFACE1}" >> ${WANSIMCONF}
-    echo "MTUSIZE=${MTUSIZE}" >> ${WANSIMCONF}
-    echo "BANDWIDTH=${BANDWIDTH}" >> ${WANSIMCONF}
-    echo "BURST=${BURST}" >> ${WANSIMCONF}
-    echo "LATENCY=${LATENCY}" >> ${WANSIMCONF}
-    echo "VARIATION=${VARIATION}" >> ${WANSIMCONF}
-    echo "PKTLOSS=${PKTLOSS}" >> ${WANSIMCONF}
-    echo "PKTDUPL=${PKTDUPL}" >> ${WANSIMCONF}
-    echo "PKTCORR=${PKTCORR}" >> ${WANSIMCONF}
+    if [ $? -eq 0 ]; then
+        touch ${WANSIMCONF}
 
-    # dialogue
-    show_text "Configuration saved"
+        echo "BRIDGE=${BRIDGE}" >> ${WANSIMCONF}
+        echo "BRIDGEIP=${BRIDGEIP}" >> ${WANSIMCONF}
+        echo "BRIDGEGW=${BRIDGEGW}" >> ${WANSIMCONF}
+        echo "IFACE0=${IFACE0}" >> ${WANSIMCONF}
+        echo "IFACE1=${IFACE1}" >> ${WANSIMCONF}
+        echo "MTUSIZE=${MTUSIZE}" >> ${WANSIMCONF}
+        echo "BANDWIDTH=${BANDWIDTH}" >> ${WANSIMCONF}
+        echo "BURST=${BURST}" >> ${WANSIMCONF}
+        echo "LATENCY=${LATENCY}" >> ${WANSIMCONF}
+        echo "VARIATION=${VARIATION}" >> ${WANSIMCONF}
+        echo "PKTLOSS=${PKTLOSS}" >> ${WANSIMCONF}
+        echo "PKTDUPL=${PKTDUPL}" >> ${WANSIMCONF}
+        echo "PKTCORR=${PKTCORR}" >> ${WANSIMCONF}
+
+        # dialogue
+        show_text "Configuration saved"
+    else
+        # dialogue
+        show_text \
+                "Configuration was not saved" \
+                "" \
+                "Please check that WANsim has write permissions to ${WANSIMCONF}" \
+                ""
+    fi
+
     user_wait "Press any key"
 }
 
@@ -339,7 +359,13 @@ do_set_packet_corruption()
 
 do_restart()
 {
-    sudo /usr/sbin/invoke-rc.d wansim restart
+    UTIL="/usr/sbin/invoke-rc.d"
+
+    if [ -e ${UTIL} ]; then
+        sudo $UTIL wansim restart
+    else
+        /etc/init.d/wansim restart
+    fi
 
     user_wait "Press any key"
 }
@@ -348,7 +374,9 @@ do_about()
 {
     show_text \
         "" \
-        "WANsim ${WANSIMVERS} by Ferry Hendrikx (c) 2008" \
+        "WANsim ${WANSIMVERS} by Ferry Hendrikx (c) 2008,2009" \
+        "" \
+        "http://wansim.googlecode.com/" \
         ""
 
     user_wait "Press any key"
@@ -418,6 +446,7 @@ while [ $quit -eq 0 ]; do
         "(r) WANsim Restart" \
         "(a) WANsim About" \
         "(q) Quit / Logout"
+
     show_diag "Option?"
     opt=
     user_read opt
@@ -486,3 +515,4 @@ while [ $quit -eq 0 ]; do
     esac
 done
 
+exit 0
