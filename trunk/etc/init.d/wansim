@@ -3,15 +3,19 @@
 #
 # WANsim v1.4 by Ferry Hendrikx, (c) 2008,2009
 #
+# chkconfig: 2345 10 60
+# description: WANsim provides an emulated WAN on your Linux server
 ######################################################################
+
 ### BEGIN INIT INFO
-# Provides:          WANsim
-# Required-Start:
-# Required-Stop:
-# Default-Start:
-# Default-Stop:
-# Short-Description: Setup simulated WAN
-# Description:
+# Provides:             wansim
+# Should-Start:
+# Required-Start:       $local_fs $network
+# Required-Stop:        $local_fs $network
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description:    Start and stop emulated WAN
+# Description:          WANsim provides an emulated WAN on your Linux server
 ### END INIT INFO
 
 PATH=/sbin:/bin
