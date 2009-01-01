@@ -362,9 +362,17 @@ do_restart()
     UTIL="/usr/sbin/invoke-rc.d"
 
     if [ -e ${UTIL} ]; then
+        show_text \
+            "" \
+            "Restarting WANsim" \
+            ""
+
         sudo $UTIL wansim restart
     else
-        /etc/init.d/wansim restart
+        show_text \
+            "" \
+            "Unable to restart the init.d script. ${UTIL} not found." \
+            ""
     fi
 
     user_wait "Press any key"
