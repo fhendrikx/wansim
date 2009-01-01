@@ -1,3 +1,14 @@
+wansim (1.4-1) unstable; urgency=low
+
+  * Changed init.d script to be more tolerant of non LSB systems
+  * Fixed LSB INIT INFO in init.d script
+  * Added chkconfig configuration line to init.d script
+  * Configuration file interfaces.conf loaded and used if it exists
+  * Additional error checking in wansimsetup
+  * Added install script for non-Debian users
+
+ -- Ferry Hendrikx <ferry.hendrikx@gmail.com>  Thu, 01 Jan 2009 15:00:00 +1200
+
 wansim (1.3-2) unstable; urgency=low
 
   * Fixed bug (relating to user-supplied patch)
