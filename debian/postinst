@@ -10,6 +10,9 @@ set -e
 
 adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim || exit $?
 
+chown -R wansim:wansim /var/lib/wansim
+chmod -R u+rw /var/lib/wansim
+
 
 # add WANsim user to sudoers
 
@@ -34,5 +37,14 @@ DEST="/var/lib/wansim"
 cp -f /usr/share/doc/wansim/examples/* ${DEST}/
 chown wansim:wansim ${DEST}/*
 
+
+# fix for WANsim 1.4
+
+# The interfaces.conf file is now loaded and used if it exists 
+# (in previous versions this file always existed)
+
+if [ -e "${DEST}/interfaces.conf" ]; then
+    mv -f ${DEST}/interfaces.conf ${DEST}/interfaces.conf.old
+fi
 
 exit 0
