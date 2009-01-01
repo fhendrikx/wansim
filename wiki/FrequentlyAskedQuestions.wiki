@@ -29,6 +29,11 @@ You will need:
   * Network Emulation module (it's under QoS/Fair Queuing)
 
 
+*Do I need to configure my interfaces?*
+
+No, WANsim will take care of configuring your interfaces and the bridge. If your interfaces require special modules to be loaded, you will still need to ensure that these are loaded.
+
+
 *Do I really need sudoers installed?*
 
 Strictly speaking you don't actually need sudoers to be installed. However, the WANsim interface offers an option that allows you to restart the WANsim init.d script. For this to work, you need to be able to run init.d scripts. This can be done via either sudoers (my preferred option) or changing the permissions bits on the script (a potential security hole).
