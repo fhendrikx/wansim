@@ -1,12 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 ######################################################################
 #
-# WANsim install script v1.0 by Ferry Hendrikx, (c) 2009
+# WANsim install script v1.1 by Ferry Hendrikx, (c) 2009
 #
 # An install script for non-Debian or source code users of WANsim.
 #
-# WARNING: This script is based on the Debian install script, however
-# it has not been extensively tested. Caution is advised.
+# This script is based on the Debian install script, however it has 
+# not been extensively tested.
+#
 ######################################################################
 
 # check we're running as root
@@ -16,6 +17,14 @@ if [ `whoami` != 'root' ]; then
 
     exit 0
 fi
+
+
+# confirm
+
+echo "WARNING: This script is experimental, use with care!"
+echo ""
+
+read
 
 
 # add WANsim setup script
@@ -46,6 +55,8 @@ echo "Add WANsim user to sudoers"
 FILE="/etc/sudoers"
 
 if [ -w "${FILE}" ]; then
+    # FIXME: Assumes Debian system
+
     echo "wansim\tALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> ${FILE}
 
     echo "- done"
