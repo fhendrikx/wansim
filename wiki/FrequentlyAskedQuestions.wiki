@@ -50,4 +50,9 @@ You should be able to use any standard network card that can be put into _promis
 
 Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what you require. You will also need to make `SETINTS=1`. These interface settings will be applied at every boot by the wansim init.d script. 
 
-Setting `SETINTS=0` will leave the interfaces unchanged. This is the default behaviour. 
+Setting `SETINTS=0` will leave the interfaces unchanged. This is the default behaviour.
+
+
+*What is the maximum emulated network speed you can achieve?*
+
+On a low end P4 I was able to achieve a 15Mbit throughput. I'm certain you'll get better results on more powerful hardware.
