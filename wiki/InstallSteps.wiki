@@ -31,6 +31,7 @@ This installation method should work for any Linux variant. You will need to dow
 
 `tar zxf WANsim.tar.gz`
 
+_Note: at this point, you could try the new install.sh script. This duplicates most of the Debian package scripts. However, please use with care as it makes some assumptions_
 
 *Step 2: Add WANsim user*
 
