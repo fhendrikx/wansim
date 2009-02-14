@@ -39,6 +39,11 @@ No, WANsim will take care of configuring your interfaces and the bridge. If your
 Strictly speaking you don't actually need sudoers to be installed. However, the WANsim interface offers an option that allows you to restart the WANsim init.d script. For this to work, you need to be able to run init.d scripts. This can be done via either sudoers (my preferred option) or changing the permissions bits on the script (a potential security hole).
 
 
+*What's the default password for the wansim user?*
+
+There isn't one. You need to set the password for the wansim user after you've installed the package. Use the UNIX passwd command to do that. 
+
+
 == Hardware ==
 
 *What network cards can I use with WANsim?*
