@@ -1,6 +1,19 @@
 #labels Phase-Support,Featured
 = News =
 
+*Feb 14th 2009*
+
+WANsim Release 1.4-1 is out.
+
+This release includes some major changes:
+  * Changed init.d script to be more tolerant of non LSB systems
+  * Fixed LSB INIT INFO in init.d script
+  * Added chkconfig configuration line to init.d script for RH systems
+  * Configuration file interfaces.conf loaded and used _only_ if it exists
+  * Additional error checking in wansimsetup
+  * Added install script for non-Debian users (experimental - use with care)
+
+
 *Dec 16th 2008*
 
 Work has started on the next release of WANsim. Expect the release to be ready early next year. My ToDo list has further information. 
