@@ -1,0 +1,41 @@
+
+INSTALL
+
+This document is not being actively maintained.
+
+Please check the WANsim wiki at:
+
+  http://wansim.googlecode.com/
+
+for the latest information.
+
+
+### Step 1. Add WANsim user
+
+adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim
+
+passwd wansim
+
+echo "wansim\tALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> /etc/sudoers
+
+
+### Step 2. Add WANsim init.d script
+
+cp wansim /etc/init.d
+
+update-rc.d wansim start 10 2 3 4 5 . stop 60 0 
+
+
+### Step 3. Add WANsim setup script
+
+cp wansimsetup /usr/sbin/
+
+
+### Step 4. Add WANsim default/sample configuration
+
+cp wansim.conf.sample /var/lib/wansim/wansim.conf
+cp interfaces.conf.sample /var/lib/wansim/interfaces.conf
+
+
+### Step 5. Login as "wansim"
+

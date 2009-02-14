@@ -1,0 +1,50 @@
+#!/bin/sh
+######################################################################
+# WANsim by Ferry Hendrikx, (c) 2008
+# postinst script
+######################################################################
+set -e
+
+
+# add WANsim user
+
+adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim || exit $?
+
+chown -R wansim:wansim /var/lib/wansim
+chmod -R u+rw /var/lib/wansim
+
+
+# add WANsim user to sudoers
+
+FILE="/etc/sudoers"
+
+if [ -w "${FILE}" ]; then
+    echo "wansim\tALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> ${FILE}
+fi
+
+
+# add WANsim init.d script
+
+if [ -x "/etc/init.d/wansim" ]; then
+	update-rc.d wansim start 10 2 3 4 5 . stop 60 0 . || exit $?
+fi
+
+
+# add WANsim configuration files
+
+DEST="/var/lib/wansim"
+
+cp -f /usr/share/doc/wansim/examples/* ${DEST}/
+chown wansim:wansim ${DEST}/*
+
+
+# fix for WANsim 1.4
+
+# The interfaces.conf file is now loaded and used if it exists 
+# (in previous versions this file always existed)
+
+if [ -e "${DEST}/interfaces.conf" ]; then
+    mv -f ${DEST}/interfaces.conf ${DEST}/interfaces.conf.old
+fi
+
+exit 0
