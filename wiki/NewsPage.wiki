@@ -10,6 +10,8 @@ This release includes:
   * Added Bridge Mask setting
   * Fixed sudoers file tab issue
 
+See the FrequentlyAskedQuestions page for more information.
+
 
 *Feb 14th 2009*
 
