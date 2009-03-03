@@ -1,4 +1,4 @@
-#labels Phase-Deploy
+﻿#labels Phase-Deploy
 = FAQ =
 
 == General ==
@@ -8,6 +8,28 @@
 I wanted a simple, easy to remember name. Obviously it needed to feature the word *WAN*. Simulation came about because I was simulating a real WAN. Of course, the term I should really have used is _emulation_. 
 
 Unfortunately, it's a little late to change it now.
+
+
+*What's the deal with certain parameters being doubled? *
+
+All of the parameters in WANsim are applied to both interfaces. Some of these parameters may have a culmulative effect, meaning that it is added once for each interface. For example, if you set a latency of 15ms in the WANsim interface, your actual latency will be 30ms (15ms for interface 0 + 15ms for interface 1).
+
+The affected parameters are clearly indicated in the WANsim interface.
+
+_WANsim 1.5-1 and above_
+
+Affected parameters:
+ * Latency and variation
+ * Packet loss
+ * Packet corruption
+ * Packet duplication
+
+_WANsim 1.4-1 and below_
+
+Affected parameters:
+ * Packet loss
+ * Packet corruption
+ * Packet duplication
 
 
 == Software ==
@@ -41,7 +63,7 @@ Strictly speaking you don't actually need sudoers to be installed. However, the 
 
 *What's the default password for the wansim user?*
 
-There isn't one. You need to set the password for the wansim user after you've installed the package. Use the UNIX passwd command to do that. 
+There isn't one. You need to set the password for the wansim user after you've installed the package. Use the UNIX _passwd_ command to do that. 
 
 
 == Hardware ==
@@ -65,3 +87,4 @@ Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what
 *What is the maximum emulated network speed you can achieve?*
 
 On a low end P4 I was able to achieve a 15Mbit throughput. I'm certain you'll get better results on more powerful hardware.
+

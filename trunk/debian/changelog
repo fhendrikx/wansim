@@ -1,3 +1,11 @@
+wansim (1.5-1) unstable; urgency=low
+
+  * Settings are now applied equally to all interfaces
+  * Added bridge netmask setting
+  * Fixed tab error in sudoers file
+
+ -- Ferry Hendrikx <ferry.hendrikx@gmail.com>  Tue,  3 Mar 2009 19:30:00 +1200
+
 wansim (1.4-1) unstable; urgency=low
 
   * Changed init.d script to be more tolerant of non LSB systems
