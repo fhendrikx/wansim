@@ -10,15 +10,15 @@ I wanted a simple, easy to remember name. Obviously it needed to feature the wor
 Unfortunately, it's a little late to change it now.
 
 
-*What's the deal with certain parameters being doubled? *
+*What's the deal with certain settings being doubled? *
 
-All of the parameters in WANsim are applied to both interfaces. Some of these parameters may have a culmulative effect, meaning that it is added once for each interface. For example, if you set a latency of 15ms in the WANsim interface, your actual latency will be 30ms (15ms for interface 0 + 15ms for interface 1).
+All of the settings in WANsim are applied to both interfaces. Some of these parameters may have a culmulative effect, meaning that it is added once for each interface. For example, if you set a latency of 15ms in the WANsim interface, your actual latency will be 30ms (15ms for interface 0 + 15ms for interface 1).
 
-The affected parameters are clearly indicated in the WANsim interface.
+The affected settings are clearly indicated in the WANsim interface.
 
 _WANsim 1.5-1 and above_
 
-Affected parameters:
+Affected settings:
  * Latency and variation
  * Packet loss
  * Packet corruption
@@ -26,7 +26,7 @@ Affected parameters:
 
 _WANsim 1.4-1 and below_
 
-Affected parameters:
+Affected settings:
  * Packet loss
  * Packet corruption
  * Packet duplication
@@ -87,4 +87,3 @@ Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what
 *What is the maximum emulated network speed you can achieve?*
 
 On a low end P4 I was able to achieve a 15Mbit throughput. I'm certain you'll get better results on more powerful hardware.
-
