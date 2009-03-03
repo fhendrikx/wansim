@@ -1,13 +1,13 @@
 #!/bin/bash
 ############################################################
 #
-# WANsim Setup v1.4 by Ferry Hendrikx, (c) 2008,2009
+# WANsim Setup v1.5 by Ferry Hendrikx, (c) 2008-2009
 #
 ############################################################
 
 # where to find my configuration file
 WANSIMCONF="/var/lib/wansim/wansim.conf"
-WANSIMVERS="v1.4"
+WANSIMVERS="v1.5"
 
 # make burstable bucket larger than normal
 BURST_HACK=1
@@ -25,13 +25,13 @@ PROG_TC="/sbin/tc"
 show_text()
 {
     clear
-    echo "##################################################"
+    echo "############################################################"
 
     for str in "$@"; do
         echo "# $str";
     done
 
-    echo "##################################################"
+    echo "############################################################"
 }
 
 show_diag()
@@ -75,7 +75,9 @@ do_sanity_check()
         show_text \
             "Warning: $PROG_IF is missing" \
             "" \
-            "WANsim will not work as expected"
+            "WANsim will not work as expected" \
+            "" \
+            "Please ensure that networking is installed on this server"
 
         user_wait "Press any key"
     fi
@@ -102,12 +104,13 @@ do_conf_load()
         BRIDGE=br0
         BRIDGEIP=0.0.0.0
         BRIDGEGW=0.0.0.0
+        BRIDGEMASK=255.255.255.0
         IFACE0=eth0
         IFACE1=eth1
         MTUSIZE=1500
         BANDWIDTH=3072
         BURST=4500
-        LATENCY=30
+        LATENCY=15
         VARIATION=1
         PKTLOSS=0
         PKTDUPL=0
@@ -125,6 +128,7 @@ do_conf_save()
         echo "BRIDGE=${BRIDGE}" >> ${WANSIMCONF}
         echo "BRIDGEIP=${BRIDGEIP}" >> ${WANSIMCONF}
         echo "BRIDGEGW=${BRIDGEGW}" >> ${WANSIMCONF}
+        echo "BRIDGEMASK=${BRIDGEMASK}" >> ${WANSIMCONF}
         echo "IFACE0=${IFACE0}" >> ${WANSIMCONF}
         echo "IFACE1=${IFACE1}" >> ${WANSIMCONF}
         echo "MTUSIZE=${MTUSIZE}" >> ${WANSIMCONF}
@@ -166,7 +170,7 @@ do_set_address()
     temp=
 
     # dialogue
-    show_text "Bridge IP address"
+    show_text "Bridge IP Address"
     show_diag ">"
     user_read temp
 
@@ -184,7 +188,7 @@ do_set_gateway()
     temp=
 
     # dialogue
-    show_text "Bridge default gateway (IP address)"
+    show_text "Bridge Default Gateway (IP address)"
     show_diag ">"
     user_read temp
 
@@ -194,6 +198,24 @@ do_set_gateway()
         eval $1=\$temp
     else
         eval $1=\$BRIDGEGW
+    fi
+}
+
+do_set_mask()
+{
+    temp=
+
+    # dialogue
+    show_text "Bridge Mask"
+    show_diag ">"
+    user_read temp
+
+    temp=`echo $temp | tr -d '[:alpha:][:space:][:cntrl:]'`
+
+    if [ ! -z "$temp" ]; then
+        eval $1=\$temp
+    else
+        eval $1=\$BRIDGEMASK
     fi
 }
 
@@ -266,7 +288,7 @@ do_set_latency()
     temp=
 
     # dialogue
-    show_text "Latency (ms)"
+    show_text "Latency (ms)" "Latency is applied to both interfaces" "The actual latency (or RTT) is double this value"
     show_diag ">"
     user_read temp
 
@@ -308,7 +330,7 @@ do_set_packet_loss()
     temp=
 
     # dialogue
-    show_text "Packet Loss %" "(Minimum percentage is 0.0000001)"
+    show_text "Packet Loss %" "(Minimum percentage is 0.0000001)" "Packet Loss is applied to both interfaces" "The actual rate of loss is double this value"
     show_diag ">"
     user_read temp
 
@@ -326,7 +348,7 @@ do_set_packet_duplication()
     temp=
 
     # dialogue
-    show_text "Packet Duplication %" "(Minimum percentage is 0.0000001)"
+    show_text "Packet Duplication %" "(Minimum percentage is 0.0000001)" "Packet Duplication is applied to both interfaces" "The actual rate of duplication is double this value"
     show_diag ">"
     user_read temp
 
@@ -344,7 +366,7 @@ do_set_packet_corruption()
     temp=
 
     # dialogue
-    show_text "Packet Corruption %" "(Minimum percentage is 0.0000001)"
+    show_text "Packet Corruption %" "(Minimum percentage is 0.0000001)" "Packet Corruption is applied to both interfaces" "The actual rate of corruption is double this value"
     show_diag ">"
     user_read temp
 
@@ -382,9 +404,13 @@ do_about()
 {
     show_text \
         "" \
-        "WANsim ${WANSIMVERS} by Ferry Hendrikx (c) 2008,2009" \
+        "WANsim ${WANSIMVERS} by Ferry Hendrikx (c) 2008-2009" \
         "" \
         "http://wansim.googlecode.com/" \
+        "" \
+        "Please note that as some values (e.g. latency) are applied" \
+        "to both interfaces, the actual value is in fact double the" \
+        "value that you have requested." \
         ""
 
     user_wait "Press any key"
@@ -436,11 +462,11 @@ while [ $quit -eq 0 ]; do
     show_text \
         "(0) Interface 0 ($IFACE0)" \
         "(1) Interface 1 ($IFACE1)" \
-        "(2) Bridge ($BRIDGE)" \
-        "(3) Bridge IP address ($BRIDGEIP)" \
-        "(4) Bridge Default gateway ($BRIDGEGW)" \
-        "(m) MTU size ($MTUSIZE bytes)" \
-        "" \
+        "(2) Bridge Interface ($BRIDGE)" \
+        "(3) Bridge IP Address ($BRIDGEIP)" \
+        "(4) Bridge Default Gateway ($BRIDGEGW)" \
+        "(5) Bridge Mask ($BRIDGEMASK)" \
+        "(m) MTU Size ($MTUSIZE bytes)" \
         "(b) WAN Bandwidth ($BANDWIDTH kbit/s)" \
         "(l) WAN Latency ($LATENCY ms)" \
         "(v) WAN Variation ($VARIATION ms)" \
@@ -448,7 +474,6 @@ while [ $quit -eq 0 ]; do
         "(D) WAN Packet Duplication ($PKTDUPL %)" \
         "(C) WAN Packet Corruption ($PKTCORR %)" \
         "(i) WAN Information" \
-        "" \
         "(d) WANsim Configuration Load" \
         "(s) WANsim Configuration Save" \
         "(r) WANsim Restart" \
@@ -474,6 +499,9 @@ while [ $quit -eq 0 ]; do
         ;;
         4)
             do_set_gateway BRIDGEGW
+        ;;
+        5)
+            do_set_mask BRIDGEMASK
         ;;
         m|M)
             do_set_mtusize MTUSIZE
