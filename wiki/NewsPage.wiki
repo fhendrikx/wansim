@@ -1,6 +1,16 @@
 #labels Phase-Support,Featured
 = News =
 
+*Mar  3rd 2009*
+
+WANsim Release 1.5-1 is out.
+
+This release includes:
+  * Settings are now applied equally to all interfaces
+  * Added Bridge Mask setting
+  * Fixed sudoers file tab issue
+
+
 *Feb 14th 2009*
 
 WANsim Release 1.4-1 is out.
