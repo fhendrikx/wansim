@@ -1,22 +1,14 @@
 = TODO =
 
-=== WANsim init.d ===
-
-  * Add: Resilience to wansim init.d script (less Debian-like dependencies)
-
-
 === WANsim setup ===
 
   * Add: Show/Hide the (r)estart option if sudoers is/is not available
-  * Fix: All IP address fields to use same editing function
-  * Fix: Check Bridge gateway defaults
   * Add: Resilience to wansim setup script (allow alternative init.d invoke methods)
 
 
 === WANsim packaging ===
 
-  * Fix: Debian packaging could be friendlier
-  * Add: Generic install script
+  * Fix: Generic install script
 
 
 === Other ===
