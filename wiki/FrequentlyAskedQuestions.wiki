@@ -86,4 +86,4 @@ Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what
 
 *What is the maximum emulated network speed you can achieve?*
 
-On a low end P4 I was able to achieve a 15Mbit throughput. I'm certain you'll get better results on more powerful hardware.
+On a low end P4 I was able to achieve a 15Mbit throughput. I'm certain you'll get better results on more powerful hardware. I have informal reports of much greater throughput on new hardware. Your milage may vary.
