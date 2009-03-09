@@ -3,12 +3,12 @@
 
 WANsim was written on an [http://www.ubuntu.com Ubuntu] Linux server. Some of the documentation on this site assumes that this is the case. 
 
-However, WANsim should work correctly on any Linux server if you have some basic knowledge of Unix/Linux administration.
+However, WANsim should work correctly on any Linux server if you have some basic knowledge of Unix/Linux administration. Recent changes to the wansim init.d script have made it more resilient on non-Debian platforms.
 
 WANsim requires the following:
 
   * Standard PC or server with at least 2 NICs (network cards)
-  * Ubuntu or Debian Linux installed (with 2.6 Linux kernel)
+  * Linux installed (with recent 2.6 Linux kernel)
 
 The following packages are required:
 
