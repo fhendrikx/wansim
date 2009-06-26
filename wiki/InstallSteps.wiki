@@ -31,7 +31,7 @@ This installation method should work for any Linux variant. You will need to dow
 
 `tar zxf WANsim.tar.gz`
 
-_Note: at this point, you could try the new install.sh script. This duplicates most of the steps below (which originally came from the Debian package scripts I wrote). However, please use this with care as it makes some assumptions about your system._
+Note: _At this point, you could try the new install.sh script. This duplicates most of the steps below (which originally came from the Debian package scripts I wrote). However, please use this with care as it makes some assumptions about your system._
 
 *Step 2: Add WANsim user*
 
@@ -43,7 +43,7 @@ If you have sudoers installed, this line allows the WANsim script to start/stop 
 
 `echo "wansim ALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> /etc/sudoers`
 
-Please note that _service_ can be used to accomplish the same goals on different systems. 
+Note: that _service_ can be used to accomplish the same goals on different systems. 
 
 
 *Step 3: Add WANsim init.d task*
@@ -54,7 +54,7 @@ The following line assumes you are using Ubuntu or Debian:
 
 `update-rc.d wansim start 10 2 3 4 5 . stop 60 0`
 
-Please note that _ntsysv_ and _chkconfig_ can be used to accomplish the same goals on different systems.
+Note: _ntsysv_ and _chkconfig_ can be used to accomplish the same goals on different systems.
 
 
 *Step 4: Add WANsim setup script*
