@@ -1,5 +1,7 @@
 = TODO =
 
+The following is my TODO list. If anyone has any other suggestions, please let me know.
+
 === WANsim setup ===
 
   * Add: Show/Hide the (r)estart option if sudoers is/is not available
@@ -8,7 +10,7 @@
 
 === WANsim packaging ===
 
-  * Fix: Generic install script
+  * Fix: Generic install script enhancements.
 
 
 === Other ===
