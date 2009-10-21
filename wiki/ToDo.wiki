@@ -2,6 +2,12 @@
 
 The following is my TODO list. If anyone has any other suggestions, please let me know.
 
+
+=== WANsim ===
+
+  * Add: Packet re-ordering support
+
+
 === WANsim setup ===
 
   * Add: Show/Hide the (r)estart option if sudoers is/is not available
