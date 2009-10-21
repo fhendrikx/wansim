@@ -5,7 +5,7 @@ The following is my TODO list. If anyone has any other suggestions, please let m
 
 === WANsim ===
 
-  * Add: Packet re-ordering support
+  * Consider: Packet re-ordering support. Not sure if this is really needed because setting a large jitter value will cause packets to be send out of order. See [http://www.linuxfoundation.org/en/Net:Netem#Packet_re-ordering] for more information.
 
 
 === WANsim setup ===
