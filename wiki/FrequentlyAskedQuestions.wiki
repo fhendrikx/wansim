@@ -32,6 +32,11 @@ Affected settings:
  * Packet duplication
 
 
+*Is packet re-ordering supported?*
+
+Setting a large variation (jitter) value will cause packets to be sent out of order. See [http://www.linuxfoundation.org/en/Net:Netem#Packet_re-ordering] for more information about how this works. 
+
+
 == Software ==
 
 *Why write the whole thing as a bash script?*
