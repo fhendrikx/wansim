@@ -1,6 +1,16 @@
 #labels Phase-Support,Featured
 = News =
 
+*Nov  3rd 2009*
+
+WANsim Release 1.6-1 is out.
+
+This release includes:
+  * Added author and licensing information
+  * Added man pages
+  * Fixed tab error in install script
+
+
 *Mar  3rd 2009*
 
 WANsim Release 1.5-1 is out.
