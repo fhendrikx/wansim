@@ -57,7 +57,7 @@ FILE="/etc/sudoers"
 if [ -w "${FILE}" ]; then
     # FIXME: Assumes Debian system
 
-    echo "wansim\tALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> ${FILE}
+    echo "wansim	ALL=NOPASSWD: /usr/sbin/invoke-rc.d" >> ${FILE}
 
     echo "- done"
 else

@@ -1,3 +1,11 @@
+wansim (1.6-1) unstable; urgency=low
+
+  * Added author and licensing information
+  * Added man pages
+  * Fixed tab error in install script
+
+ -- Ferry Hendrikx <ferry.hendrikx@gmail.com>  Wed,  3 Nov 2009 12:00:00 +1200
+
 wansim (1.5-1) unstable; urgency=low
 
   * Settings are now applied equally to all interfaces
