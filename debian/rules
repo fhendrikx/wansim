@@ -40,9 +40,9 @@ binary-indep: checkroot
 	$(install_dir) debian/tmp/usr/share/doc/wansim/examples/
 	$(install_file) usr/share/doc/wansim/examples/* debian/tmp/usr/share/doc/wansim/examples/
 
-	$(install_dir) debian/tmp/usr/share/man/man1/
-	$(install_file) usr/share/man/man1/* debian/tmp/usr/share/man/man1/
-	gzip -9v debian/tmp/usr/share/man/man1/*
+	$(install_dir) debian/tmp/usr/share/man/man8/
+	$(install_file) usr/share/man/man8/* debian/tmp/usr/share/man/man8/
+	gzip -9v debian/tmp/usr/share/man/man8/*
 
 	dpkg-gencontrol -pwansim
 
