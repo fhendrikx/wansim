@@ -34,7 +34,7 @@ Affected settings:
 
 *Is packet re-ordering supported?*
 
-Setting a large variation (jitter) value will cause packets to be sent out of order. You'll want to ignore the recommendations and try something larger than 10%. See [http://www.linuxfoundation.org/en/Net:Netem#Packet_re-ordering Netem] for more information about the requirements.
+Setting large latency and variation (jitter) values will cause packets to be sent out of order. Please read the following section about [http://www.linuxfoundation.org/en/Net:Netem#Packet_re-ordering packet re-ordering] for more information. You should however note that this feature requires a recent 2.6 kernel. 
 
 
 == Software ==
