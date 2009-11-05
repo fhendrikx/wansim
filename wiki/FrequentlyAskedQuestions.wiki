@@ -32,6 +32,11 @@ Affected settings:
  * Packet duplication
 
 
+*What do the Packet loss, corruption and duplication values actually mean?*
+
+These values control the percentage of packets that are dropped, corrupted or duplicated respectively. For example, setting 1% packet loss would cause 1 in 100 packets to be dropped. Similarly, setting 0.1% packet loss would cause 1 in 1000 packets to be dropped. The smallest value possible is 0.0000000232% (which is 2^32^). 
+
+
 *Is packet re-ordering supported?*
 
 Setting large latency and variation (jitter) values will cause packets to be sent out of order. Please read the following section about [http://www.linuxfoundation.org/en/Net:Netem#Packet_re-ordering packet re-ordering] for more information. You should however note that this feature requires a recent 2.6 kernel. 
