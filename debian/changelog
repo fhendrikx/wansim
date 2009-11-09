@@ -1,3 +1,12 @@
+wansim (2.0.0-1) unstable; urgency=low
+
+  * Major new release
+  * Added "bridge" and "router" modes
+  * Added smarter binary detection
+  * Added new options to wansimsetup
+
+ -- Ferry Hendrikx <ferry.hendrikx@gmail.com>  Tue, 10 Nov 2009 12:00:00 +1200
+
 wansim (1.6-1) unstable; urgency=low
 
   * Added author and licensing information
