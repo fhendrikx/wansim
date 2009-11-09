@@ -1,31 +1,43 @@
 #!/bin/bash
 ############################################################
 #
-# WANsim Setup v1.5 by Ferry Hendrikx, (c) 2008-2009
+# WANsim Setup v2.0.0 by Ferry Hendrikx, (c) 2008-2009
 #
 ############################################################
 
 # where to find my configuration file
 WANSIMCONF="/var/lib/wansim/wansim.conf"
-WANSIMVERS="v1.5"
+WANSIMVERS="v2.0.0"
 
 # make burstable bucket larger than normal
 BURST_HACK=1
 
 # bridge and tc check
-PROG_BR="/usr/sbin/brctl"
-PROG_IF="/sbin/ifconfig"
-PROG_TC="/sbin/tc"
+PROG_BR=`which brctl`
+PROG_IF=`which ifconfig`
+PROG_TC=`which tc`
 
 
 ############################################################
 # functions
 ############################################################
 
-show_text()
+show_scrn()
 {
     clear
     echo "############################################################"
+}
+
+show_list()
+{
+    for str in "$@"; do
+        echo "# $str";
+    done
+}
+
+show_page()
+{
+    show_scrn
 
     for str in "$@"; do
         echo "# $str";
@@ -60,9 +72,9 @@ user_wait()
 
 do_sanity_check()
 {
-    if [ ! -e ${PROG_BR} ]; then
-        show_text \
-            "Warning: $PROG_BR is missing" \
+    if [ -z ${PROG_BR} ]; then
+        show_page \
+            "Warning: brctl is missing" \
             "" \
             "WANsim will not work as expected" \
             "" \
@@ -71,9 +83,9 @@ do_sanity_check()
         user_wait "Press any key"
     fi
 
-    if [ ! -e ${PROG_IF} ]; then
-        show_text \
-            "Warning: $PROG_IF is missing" \
+    if [ -z ${PROG_IF} ]; then
+        show_page \
+            "Warning: ifconfig is missing" \
             "" \
             "WANsim will not work as expected" \
             "" \
@@ -82,9 +94,9 @@ do_sanity_check()
         user_wait "Press any key"
     fi
 
-    if [ ! -e ${PROG_TC} ]; then
-        show_text \
-            "Warning: $PROG_TC is missing" \
+    if [ -z ${PROG_TC} ]; then
+        show_page \
+            "Warning: tc is missing" \
             "" \
             "WANsim will not work as expected" \
             "" \
@@ -101,12 +113,16 @@ do_conf_load()
     else
         # set some default values
 
+        TYPE=bridge
+        VERBOSE=no
+        IFACE0=eth0
+        IFACE1=eth1
+        IPF=yes
+        AFFECT=eth0
         BRIDGE=br0
         BRIDGEIP=0.0.0.0
         BRIDGEGW=0.0.0.0
         BRIDGEMASK=255.255.255.0
-        IFACE0=eth0
-        IFACE1=eth1
         MTUSIZE=1500
         BANDWIDTH=3072
         BURST=4500
@@ -125,12 +141,16 @@ do_conf_save()
     if [ $? -eq 0 ]; then
         touch ${WANSIMCONF}
 
+        echo "TYPE=${TYPE}" >> ${WANSIMCONF}
+        echo "VERBOSE=${VERBOSE}" >> ${WANSIMCONF}
+        echo "IFACE0=${IFACE0}" >> ${WANSIMCONF}
+        echo "IFACE1=${IFACE1}" >> ${WANSIMCONF}
+        echo "IPF=${IPF}" >> ${WANSIMCONF}
+        echo "AFFECT=${AFFECT}" >> ${WANSIMCONF}
         echo "BRIDGE=${BRIDGE}" >> ${WANSIMCONF}
         echo "BRIDGEIP=${BRIDGEIP}" >> ${WANSIMCONF}
         echo "BRIDGEGW=${BRIDGEGW}" >> ${WANSIMCONF}
         echo "BRIDGEMASK=${BRIDGEMASK}" >> ${WANSIMCONF}
-        echo "IFACE0=${IFACE0}" >> ${WANSIMCONF}
-        echo "IFACE1=${IFACE1}" >> ${WANSIMCONF}
         echo "MTUSIZE=${MTUSIZE}" >> ${WANSIMCONF}
         echo "BANDWIDTH=${BANDWIDTH}" >> ${WANSIMCONF}
         echo "BURST=${BURST}" >> ${WANSIMCONF}
@@ -141,10 +161,10 @@ do_conf_save()
         echo "PKTCORR=${PKTCORR}" >> ${WANSIMCONF}
 
         # dialogue
-        show_text "Configuration saved"
+        show_page "Configuration saved"
     else
         # dialogue
-        show_text \
+        show_page \
                 "Configuration was not saved" \
                 "" \
                 "Please check that WANsim has write permissions to ${WANSIMCONF}" \
@@ -154,9 +174,27 @@ do_conf_save()
     user_wait "Press any key"
 }
 
+do_set_type()
+{
+    if [ $TYPE == "bridge" ]; then
+        TYPE="router"
+    else
+        TYPE="bridge"
+    fi
+}
+
+do_set_verbose()
+{
+    if [ $VERBOSE == "yes" ]; then
+        VERBOSE="no"
+    else
+        VERBOSE="yes"
+    fi
+}
+
 do_set_interface()
 {
-    show_text "Interface (device name)"
+    show_page "Interface (device name)"
     show_diag ">"
     user_read temp
 
@@ -170,7 +208,7 @@ do_set_address()
     temp=
 
     # dialogue
-    show_text "Bridge IP Address"
+    show_page "Bridge IP Address"
     show_diag ">"
     user_read temp
 
@@ -188,7 +226,7 @@ do_set_gateway()
     temp=
 
     # dialogue
-    show_text "Bridge Default Gateway (IP address)"
+    show_page "Bridge Default Gateway (IP address)"
     show_diag ">"
     user_read temp
 
@@ -206,7 +244,7 @@ do_set_mask()
     temp=
 
     # dialogue
-    show_text "Bridge Mask"
+    show_page "Bridge Mask"
     show_diag ">"
     user_read temp
 
@@ -219,12 +257,32 @@ do_set_mask()
     fi
 }
 
+do_set_affected()
+{
+    if   [ $AFFECT == "both"  ]; then
+        AFFECT=$IFACE0
+    elif [ $AFFECT == $IFACE0 ]; then
+        AFFECT=$IFACE1
+    else
+        AFFECT="both"
+    fi
+}
+
+do_set_ipf()
+{
+    if [ $IPF == "yes" ]; then
+        IPF="no"
+    else
+        IPF="yes"
+    fi
+}
+
 do_set_mtusize()
 {
     temp=
 
     # dialogue
-    show_text "MTU size (bytes)"
+    show_page "MTU size (bytes)"
     show_diag ">"
     user_read temp
 
@@ -242,7 +300,7 @@ do_set_bandwidth()
     temp=
 
     # dialogue
-    show_text "Bandwidth (kbit/s)"
+    show_page "Bandwidth (kbit/s)"
     show_diag ">"
     user_read temp
 
@@ -288,7 +346,7 @@ do_set_latency()
     temp=
 
     # dialogue
-    show_text "Latency (ms)" "Latency is applied to both interfaces" "The actual latency (or RTT) is double this value"
+    show_page "Latency (ms)" "Latency is applied to both interfaces" "The actual latency (or RTT) is double this value"
     show_diag ">"
     user_read temp
 
@@ -312,7 +370,7 @@ do_set_variation()
     fi
 
     # dialogue
-    show_text "Variation (ms)" "(Recommended maximum variation of $recc ms)"
+    show_page "Variation (ms)" "(Recommended maximum variation of $recc ms)"
     show_diag ">"
     user_read temp
 
@@ -330,7 +388,7 @@ do_set_packet_loss()
     temp=
 
     # dialogue
-    show_text "Packet Loss %" "(Minimum percentage is 0.0000001)" "Packet Loss is applied to both interfaces" "The actual rate of loss is double this value"
+    show_page "Packet Loss %" "(Minimum percentage is 0.0000001)" "Packet Loss is applied to both interfaces" "The actual rate of loss is double this value"
     show_diag ">"
     user_read temp
 
@@ -348,7 +406,7 @@ do_set_packet_duplication()
     temp=
 
     # dialogue
-    show_text "Packet Duplication %" "(Minimum percentage is 0.0000001)" "Packet Duplication is applied to both interfaces" "The actual rate of duplication is double this value"
+    show_page "Packet Duplication %" "(Minimum percentage is 0.0000001)" "Packet Duplication is applied to both interfaces" "The actual rate of duplication is double this value"
     show_diag ">"
     user_read temp
 
@@ -366,7 +424,7 @@ do_set_packet_corruption()
     temp=
 
     # dialogue
-    show_text "Packet Corruption %" "(Minimum percentage is 0.0000001)" "Packet Corruption is applied to both interfaces" "The actual rate of corruption is double this value"
+    show_page "Packet Corruption %" "(Minimum percentage is 0.0000001)" "Packet Corruption is applied to both interfaces" "The actual rate of corruption is double this value"
     show_diag ">"
     user_read temp
 
@@ -384,14 +442,14 @@ do_restart()
     UTIL="/usr/sbin/invoke-rc.d"
 
     if [ -e ${UTIL} ]; then
-        show_text \
+        show_page \
             "" \
             "Restarting WANsim" \
             ""
 
         sudo $UTIL wansim restart
     else
-        show_text \
+        show_page \
             "" \
             "Unable to restart the init.d script. ${UTIL} not found." \
             ""
@@ -402,15 +460,20 @@ do_restart()
 
 do_about()
 {
-    show_text \
+    show_page \
         "" \
         "WANsim ${WANSIMVERS} by Ferry Hendrikx (c) 2008-2009" \
         "" \
         "http://wansim.googlecode.com/" \
         "" \
+        "Bridge mode:" \
         "Please note that as some values (e.g. latency) are applied" \
         "to both interfaces, the actual value is in fact double the" \
         "value that you have requested." \
+        "" \
+        "Router mode:" \
+        "Please note that all values are applied only to the router" \
+        "interface." \
         ""
 
     user_wait "Press any key"
@@ -421,7 +484,7 @@ do_information()
     done=0
 
     while [ $done -eq 0 ]; do
-        show_text "WAN Information" "(Press q and then enter to quit)"
+        show_page "WAN Information" "(Press q and then enter to quit)"
 
         echo ""
         echo "---------- ${IFACE0} ----------"
@@ -459,13 +522,27 @@ do_sanity_check
 quit=0
 
 while [ $quit -eq 0 ]; do
-    show_text \
+    show_scrn
+
+    show_list \
+        "(t) Type of system ($TYPE)" \
+        "(V) Verbose ($VERBOSE)" \
         "(0) Interface 0 ($IFACE0)" \
-        "(1) Interface 1 ($IFACE1)" \
-        "(2) Bridge Interface ($BRIDGE)" \
-        "(3) Bridge IP Address ($BRIDGEIP)" \
-        "(4) Bridge Default Gateway ($BRIDGEGW)" \
-        "(5) Bridge Mask ($BRIDGEMASK)" \
+        "(1) Interface 1 ($IFACE1)"
+
+    if [ $TYPE == "bridge" ]; then
+        show_list \
+            "(2) Bridge Interface ($BRIDGE)" \
+            "(3) Bridge IP Address ($BRIDGEIP)" \
+            "(4) Bridge Default Gateway ($BRIDGEGW)" \
+            "(5) Bridge Mask ($BRIDGEMASK)"
+    else
+        show_list \
+            "(w) Router Interface ($AFFECT)" \
+            "(f) Router IP forwarding ($IPF)"
+    fi
+
+    show_list \
         "(m) MTU Size ($MTUSIZE bytes)" \
         "(b) WAN Bandwidth ($BANDWIDTH kbit/s)" \
         "(l) WAN Latency ($LATENCY ms)" \
@@ -485,6 +562,12 @@ while [ $quit -eq 0 ]; do
     user_read opt
 
     case "$opt" in
+        t)
+            do_set_type
+        ;;
+        V)
+            do_set_verbose
+        ;;
         0)
             do_set_interface IFACE0
         ;;
@@ -502,6 +585,12 @@ while [ $quit -eq 0 ]; do
         ;;
         5)
             do_set_mask BRIDGEMASK
+        ;;
+        w)
+            do_set_affected
+        ;;
+        f)
+            do_set_ipf
         ;;
         m|M)
             do_set_mtusize MTUSIZE
