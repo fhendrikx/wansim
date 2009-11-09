@@ -1,6 +1,11 @@
 #labels Phase-Support,Featured
 = News =
 
+*Nov 10th 2009*
+
+Started work on the next major revision of WANsim. This version will include both "bridge" and "router" support and is intended to work with a wider range of Linux distributions.
+
+
 *Nov  3rd 2009*
 
 WANsim Release 1.6-1 is out.
