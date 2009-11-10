@@ -5,17 +5,24 @@
 #
 ############################################################
 
-# where to find my configuration file
-WANSIMCONF="/var/lib/wansim/wansim.conf"
-WANSIMVERS="v2.0.0"
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-# make burstable bucket larger than normal
-BURST_HACK=1
+# utils
 
-# bridge and tc check
 PROG_BR=`which brctl`
 PROG_IF=`which ifconfig`
 PROG_TC=`which tc`
+
+
+# where to find my configuration file
+
+WANSIMCONF="/var/lib/wansim/wansim.conf"
+WANSIMVERS="v2.0.0"
+
+
+# make burstable bucket larger than normal
+
+BURST_HACK=1
 
 
 ############################################################
