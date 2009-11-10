@@ -18,25 +18,10 @@
 # Description:          WANsim provides an emulated WAN on your Linux server
 ### END INIT INFO
 
-PATH=/sbin:/bin
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-
-# configuration
-
-CONF_BR="/var/lib/wansim/wansim.conf"
-CONF_IF="/var/lib/wansim/interfaces.conf"
-VERBOSE=no
-
-
-# get lsb functions
-
-if [ -e "/lib/init/vars.sh" ]; then
-    . /lib/init/vars.sh
-fi
-
-if [ -e "/lib/lsb/init-functions" ]; then
-    . /lib/lsb/init-functions
-fi
+USE_LSB=yes
+VERBOSE=yes
 
 
 # utils
@@ -67,7 +52,25 @@ if [ ! -e "${PROG_RT}" ]; then
 fi
 
 
-# load configuration
+# utilise LSB if we have it
+
+if [ -e "/lib/init/vars.sh" ]; then
+    . /lib/init/vars.sh
+else
+    USE_LSB=no
+fi
+
+if [ -e "/lib/lsb/init-functions" ]; then
+    . /lib/lsb/init-functions
+else
+    USE_LSB=no
+fi
+
+
+# configuration
+
+CONF_BR="/var/lib/wansim/wansim.conf"
+CONF_IF="/var/lib/wansim/interfaces.conf"
 
 if [ -e "${CONF_BR}" ]; then
     . ${CONF_BR}
@@ -76,13 +79,43 @@ else
 fi
 
 
+######################################################################
+# functions
+######################################################################
+
+log_begin () {
+    if [ $USE_LSB = "yes" ]; then
+        log_action_begin_msg ${1}
+    else
+        echo ${1}
+    fi
+}
+
+
+log_msg () {
+    if [ $USE_LSB = "yes" ]; then
+        log_action_msg ${1}
+    else
+        echo ${1}
+    fi
+}
+
+
+log_end () {
+    if [ $USE_LSB = "yes" ]; then
+        log_action_end_msg 0
+    fi
+}
+
+
 do_start () {
-    [ $VERBOSE = "no" ] || log_action_begin_msg "Starting WANsim"
+    [ $VERBOSE = "no" ] || log_begin "Starting WANsim"
 
 
     # stand up bridge
 
     if [ $TYPE = "bridge" ]; then
+        [ $VERBOSE = "no" ] || log_msg "Configuring bridge"
 
         # bring down interfaces
 
@@ -94,23 +127,6 @@ do_start () {
 
         $PROG_IF ${IFACE0} 0.0.0.0 mtu ${MTUSIZE} up
         $PROG_IF ${IFACE1} 0.0.0.0 mtu ${MTUSIZE} up
-
-
-        # set interfaces
-
-        if [ -e "${CONF_IF}" ]; then
-            . ${CONF_IF}
-
-            if [ -e "${PROG_ET}" ]; then
-                $PROG_ET -s ${IFACE0} autoneg ${IF0AUTONEG}
-                $PROG_ET -s ${IFACE0} speed ${IF0SPEED}
-                $PROG_ET -s ${IFACE0} duplex ${IF0DUPLEX}
-
-                $PROG_ET -s ${IFACE1} autoneg ${IF1AUTONEG}
-                $PROG_ET -s ${IFACE1} speed ${IF1SPEED}
-                $PROG_ET -s ${IFACE1} duplex ${IF1DUPLEX}
-            fi
-        fi
 
 
         # bring up bridge
@@ -135,31 +151,70 @@ do_start () {
     fi
 
 
-    # settings for iface0
+    # interfaces settings
 
-    if [ $AFFECT != "both" ] && [ $AFFECT = $IFACE0 ] || [ $AFFECT = "both" ]; then
-        $PROG_TC qdisc add dev ${IFACE0} root handle 10:0 netem delay ${LATENCY}ms ${VARIATION}ms 75%
-        $PROG_TC qdisc add dev ${IFACE0} parent 10:1 handle 11: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency 100ms
+    if [ -e "${CONF_IF}" ]; then
+        . ${CONF_IF}
 
-        if [ "$PKTLOSS" -gt 0 -o "$PKTDUPL" -gt 0 -o "$PKTCORR" -gt 0 ]; then
-            $PROG_TC qdisc add dev ${IFACE0} parent 11:1 handle 12: netem loss ${PKTLOSS}%
-            $PROG_TC qdisc add dev ${IFACE0} parent 12:1 handle 13: netem duplicate ${PKTDUPL}%
-            $PROG_TC qdisc add dev ${IFACE0} parent 13:1 handle 14: netem corrupt ${PKTCORR}%
+        if [ -e "${PROG_ET}" ]; then
+            [ $VERBOSE = "no" ] || log_msg "Configuring $IFACE0 settings"
+            $PROG_ET -s ${IFACE0} autoneg ${IF0AUTONEG}
+            $PROG_ET -s ${IFACE0} speed ${IF0SPEED}
+            $PROG_ET -s ${IFACE0} duplex ${IF0DUPLEX}
+
+            [ $VERBOSE = "no" ] || log_msg "Configuring $IFACE1 settings"
+            $PROG_ET -s ${IFACE1} autoneg ${IF1AUTONEG}
+            $PROG_ET -s ${IFACE1} speed ${IF1SPEED}
+            $PROG_ET -s ${IFACE1} duplex ${IF1DUPLEX}
         fi
     fi
 
 
-    # settings for iface1
+    # bring up iface0
+
+    if [ $AFFECT != "both" ] && [ $AFFECT = $IFACE0 ] || [ $AFFECT = "both" ]; then
+        [ $VERBOSE = "no" ] || log_msg "Configuring $IFACE0"
+
+        COMMAND="$PROG_TC qdisc add dev ${IFACE0} root handle 10:0 netem delay ${LATENCY}ms ${VARIATION}ms 75%"
+
+        if [ "$PKTLOSS" -gt 0 ]; then
+            COMMAND="$COMMAND loss ${PKTLOSS}%"
+        fi
+
+        if [ "$PKTDUPL" -gt 0 ]; then
+            COMMAND="$COMMAND duplicate ${PKTDUPL}%"
+        fi
+
+        if [ "$PKTCORR" -gt 0 ]; then
+            COMMAND="$COMMAND corrupt ${PKTCORR}%"
+        fi
+
+        $COMMAND
+        $PROG_TC qdisc add dev ${IFACE0} parent 10:1 handle 11: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency ${LATENCY}ms
+    fi
+
+
+    # bring up iface1
 
     if [ $AFFECT != "both" ] && [ $AFFECT = $IFACE1 ] || [ $AFFECT = "both" ]; then
-        $PROG_TC qdisc add dev ${IFACE1} root handle 20:0 netem delay ${LATENCY}ms ${VARIATION}ms 75%
-        $PROG_TC qdisc add dev ${IFACE1} parent 20:1 handle 21: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency 100ms
+        [ $VERBOSE = "no" ] || log_msg "Configuring $IFACE1"
 
-        if [ "$PKTLOSS" -gt 0 -o "$PKTDUPL" -gt 0 -o "$PKTCORR" -gt 0 ]; then
-            $PROG_TC qdisc add dev ${IFACE1} parent 21:1 handle 22: netem loss ${PKTLOSS}%
-            $PROG_TC qdisc add dev ${IFACE1} parent 22:1 handle 23: netem duplicate ${PKTDUPL}%
-            $PROG_TC qdisc add dev ${IFACE1} parent 23:1 handle 24: netem corrupt ${PKTCORR}%
+        COMMAND="$PROG_TC qdisc add dev ${IFACE1} root handle 20:0 netem delay ${LATENCY}ms ${VARIATION}ms 75%"
+
+        if [ "$PKTLOSS" -gt 0 ]; then
+            COMMAND="$COMMAND loss ${PKTLOSS}%"
         fi
+
+        if [ "$PKTDUPL" -gt 0 ]; then
+            COMMAND="$COMMAND duplicate ${PKTDUPL}%"
+        fi
+
+        if [ "$PKTCORR" -gt 0 ]; then
+            COMMAND="$COMMAND corrupt ${PKTCORR}%"
+        fi
+
+        $COMMAND
+        $PROG_TC qdisc add dev ${IFACE1} parent 20:1 handle 21: tbf rate ${BANDWIDTH}kbit burst ${BURST} latency ${LATENCY}ms
     fi
 
 
@@ -177,28 +232,44 @@ do_start () {
     # IP forwarding
 
     if [ $TYPE = "router" ]; then
-        if [ $IPF = "yes" ]; then
-            if [ -f "/proc/sys/net/ipv4/ip_forward" ]; then
+        if [ -f "/proc/sys/net/ipv4/ip_forward" ]; then
+            if [ $IPF = "yes" ]; then
                 echo "1" > /proc/sys/net/ipv4/ip_forward
+            else
+                echo "0" > /proc/sys/net/ipv4/ip_forward
             fi
         fi
     fi
 
-    [ $VERBOSE = "no" ] || log_action_end_msg 0
+    [ $VERBOSE = "no" ] || log_end
 }
 
 do_stop () {
-    [ $VERBOSE = "no" ] || log_action_begin_msg "Stopping WANsim"
+    [ $VERBOSE = "no" ] || log_begin "Stopping WANsim"
 
+
+    # bring down iface0
+
+    [ $VERBOSE = "no" ] || log_msg "Unconfiguring $IFACE0"
     $PROG_TC qdisc del dev ${IFACE0} root
+
+
+    # bring down iface1
+
+    [ $VERBOSE = "no" ] || log_msg "Unconfiguring $IFACE1"
     $PROG_TC qdisc del dev ${IFACE1} root
 
+
+    # bring down bridge
+
     if [ $TYPE = "bridge" ]; then
+        [ $VERBOSE = "no" ] || log_msg "Unconfiguring bridge"
+
         $PROG_IF ${BRIDGE} down
         $PROG_BR delbr ${BRIDGE}
     fi
 
-    [ $VERBOSE = "no" ] || log_action_end_msg 0
+    [ $VERBOSE = "no" ] || log_end
 }
 
 
