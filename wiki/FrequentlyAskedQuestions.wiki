@@ -46,7 +46,7 @@ Setting large latency and variation (jitter) values will cause packets to be sen
 
 *Why write the whole thing as a bash script?*
 
-Why not? I could have used Perl, but bash is more widely available, especially on resource limited boxes.
+Why not? I could have used Perl, but bash is more widely available, especially on small systems with limited resources (think Soekris Net4501) or embedded systems.
 
 
 *What kernel do I need?*
@@ -96,4 +96,4 @@ Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what
 
 *What is the maximum emulated network speed you can achieve?*
 
-On a low end P4 I was able to achieve a 15Mbit throughput. I'm certain you'll get better results on more powerful hardware. I have informal reports of much greater throughput on new hardware. Your milage may vary.
+On a low end Pentium IV I was able to achieve a 15Mbit throughput. I'm certain you'll get better results on more powerful hardware. I have informal reports of much greater throughput on new hardware. Your milage may vary.
