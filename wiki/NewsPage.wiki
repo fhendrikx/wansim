@@ -1,6 +1,11 @@
 #labels Phase-Support,Featured
 = News =
 
+*May 26th 2011*
+
+I have received some patches that have spurred me to release the major update mentioned below. In particular, netem qdiscs are not allowed to have child qdiscs anymore, so the approach in the init file has changed. Watch this space.
+
+
 *Nov 10th 2009*
 
 Started work on the next major revision of WANsim. This version will include both "bridge" and "router" support and is intended to work with a wider range of Linux distributions.
