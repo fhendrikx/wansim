@@ -33,7 +33,7 @@ binary-indep: checkroot
 	$(install_file) debian/changelog debian/tmp/usr/share/doc/wansim/changelog.Debian
 	gzip -9v debian/tmp/usr/share/doc/wansim/*
 	$(install_file) debian/copyright debian/tmp/usr/share/doc/wansim/
-	$(install_file) AUTHORS debian/tmp/usr/share/doc/wansim/
+	$(install_file) CONTRIBS debian/tmp/usr/share/doc/wansim/
 	$(install_file) usr/share/doc/wansim/INSTALL debian/tmp/usr/share/doc/wansim/
 	$(install_file) usr/share/doc/wansim/README debian/tmp/usr/share/doc/wansim/
 
