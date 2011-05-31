@@ -7,8 +7,8 @@ However, WANsim should work correctly on any Linux server if you have some basic
 
 WANsim requires the following:
 
-  * Standard PC or server with at least 2 NICs (network cards)
-  * Linux installed (with recent 2.6 Linux kernel)
+  * Standard PC or server with at least 2 NICs (network cards) for bridged mode
+  * Linux installed (with a recent 2.6 Linux kernel)
 
 The following packages are required:
 

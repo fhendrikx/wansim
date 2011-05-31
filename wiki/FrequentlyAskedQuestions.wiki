@@ -42,16 +42,21 @@ These values control the percentage of packets that are dropped, corrupted or du
 Setting large latency and variation (jitter) values will cause packets to be sent out of order. Please read the following section about [http://www.linuxfoundation.org/en/Net:Netem#Packet_re-ordering packet re-ordering] for more information. You should however note that this feature requires a recent 2.6 kernel. 
 
 
+*Does the menu still fit into an 80x25 console?*
+
+I originally tried to keep WANsimsetup within the 80x25 boundaries, however there simply wasn't room.
+
+
 == Software ==
 
 *Why write the whole thing as a bash script?*
 
-Why not? I could have used Perl, but bash is more widely available, especially on small systems with limited resources (think Soekris Net4501) or embedded systems.
+Why not? I could have used Perl, but bash is more widely available, especially on small systems with limited resources (think something like a Soekris Net4501) or embedded systems.
 
 
 *What kernel do I need?*
 
-You need a relatively recent Linux kernel. Any 2.6+ Linux kernel should do the trick.
+You need a relatively recent Linux kernel. Any recent 2.6+ Linux kernel should do the trick.
 
 
 *What modules do I need to enable/compile in my kernel?*

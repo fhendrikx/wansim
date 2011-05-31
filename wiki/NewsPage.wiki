@@ -1,6 +1,16 @@
 #labels Phase-Support,Featured
 = News =
 
+*May 31th 2011*
+
+WANsim Release 2.0.0-1 is out.
+
+This release includes:
+  * Bridge and Router modes
+  * Re-worked qdisc setting code
+  * Correlation settings in the menu
+
+
 *May 26th 2011*
 
 I have received some patches that have spurred me to release the major update mentioned below. In particular, netem qdiscs are not allowed to have child qdiscs anymore, so the approach in the init file has changed. Watch this space.
