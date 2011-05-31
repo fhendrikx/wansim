@@ -6,7 +6,7 @@ wansim (2.0.0-1) unstable; urgency=low
   * Added new options to wansimsetup
   * Changed how netem qdiscs are specified
 
- -- Ferry Hendrikx <ferry.hendrikx@gmail.com>  Mon, 30 May 2011 12:00:00 +1200
+ -- Ferry Hendrikx <ferry.hendrikx@gmail.com>  Tue, 31 May 2011 12:00:00 +1200
 
 wansim (1.6-1) unstable; urgency=low
 
