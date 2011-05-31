@@ -1,0 +1,55 @@
+
+INTRODUCTION
+
+This document is not being actively maintained.
+
+Please check the WANsim wiki at:
+
+  http://wansim.googlecode.com/
+
+for the latest information.
+
+
+WANsim is a simple, inline bridge that allows you to simulate a WAN
+connection. Simply ensure that your Linux box has 2 NICs and place
+it between your "local" and "remote" locations.
+
+            +--------+
+ Local -----| WANsim |----- Remote
+            +--------+
+
+WANsim allows you to change the WAN speed (in kbit/s) and the latency 
+(in ms) of the data passing over the simulated WAN connection. WANsim
+will also allow you to introduce errors (such as packet corruption,
+loss and duplication).
+
+WANsim uses the Linux NETEM functionality to accomplish its goals. It
+was developed on an Ubuntu Linux system. It is highly recommend that 
+you use Linux Kernel 2.6.22 or later.
+
+
+USAGE
+
+Please install WANsim on your computer as detailed in the INSTALL
+document.
+
+Once installed, you can login as "wansim" and change the simulated
+WAN settings using the menu. Then, save your new configuration and
+either restart WANsim or reboot the computer.
+
+Your simulated WAN will be automatically started at boot time.
+
+
+HISTORY
+
+WANsim was developed for my own testing purposes. It initially started 
+life as a simple script that was called at boot time. Configurable
+features were added over time and finally the menu system was added.
+
+Some features were added purely for this public release. Please let me
+know if you have any problems, fixes or patches.
+
+Cheers, Ferry Hendrikx
+
+20/09/2008
+
