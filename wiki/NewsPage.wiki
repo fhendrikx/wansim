@@ -1,7 +1,7 @@
 #labels Phase-Support,Featured
 = News =
 
-*Feb 11 2013*
+*Feb 11th 2013*
 
 WANsim Release 2.0.1-1 is out.
 
