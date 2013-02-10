@@ -1,3 +1,4 @@
 Ferry Hendrikx <ferry.hendrikx@gmail.com> - Project creator and principle author
-Sebastian Ahndorf <witheld> - Added correlation settings and new qdisc behaviour
+Sebastian Ahndorf <withheld> - Added correlation settings and new qdisc behaviour
+Tino Svatek <withheld> - Noted that some util paths had changed from /usr/sbin to /sbin
 
