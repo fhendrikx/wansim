@@ -1,6 +1,13 @@
 #labels Phase-Support,Featured
 = News =
 
+*Feb 11 2013*
+
+WANsim Release 2.0.1-1 is out.
+
+This release is just a minor fix to some util paths in the init.d script that have changed from /usr/sbin to /sbin. Thanks to Tino Svatek for pointing it out. 
+
+
 *May 31th 2011*
 
 WANsim Release 2.0.0-1 is out.
