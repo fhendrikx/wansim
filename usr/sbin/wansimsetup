@@ -1,7 +1,7 @@
 #!/bin/bash
 ############################################################
 #
-# WANsim Setup v2.0.1 by Ferry Hendrikx, (c) 2008-2013
+# WANsim Setup v2.1.0 by Ferry Hendrikx, (c) 2008-2014
 #
 ############################################################
 
@@ -17,12 +17,7 @@ PROG_TC=`which tc`
 # where to find my configuration file
 
 WANSIMCONF="/var/lib/wansim/wansim.conf"
-WANSIMVERS="v2.0.1"
-
-
-# make burstable bucket larger than normal
-
-BURST_HACK=1
+WANSIMVERS="v2.1.0"
 
 
 ############################################################
@@ -131,8 +126,8 @@ do_conf_load()
         BRIDGEGW=0.0.0.0
         BRIDGEMASK=255.255.255.0
         MTUSIZE=1500
-        BANDWIDTH=3072
-        BURST=4500
+        BANDWIDTH=1024
+        BURST=10
         LATENCY=15
         VARIATION=1
         PKTLOSS=0
@@ -319,7 +314,7 @@ do_set_bandwidth()
     temp=
 
     # dialogue
-    show_page "Bandwidth (kbit/s)"
+    show_page "Bandwidth (Kbit/s)"
     show_diag ">"
     user_read temp
 
@@ -334,27 +329,14 @@ do_set_bandwidth()
 
 do_set_burst()
 {
-    # bandwidth in byte/s = kbit/s * 1000 / 8
-    # divide by clockspeed (Hz)
-    let "buff=($BANDWIDTH * 125) / 100"
+    # divide
 
-    # ensure burst is always a multiple of MTU size
-    let "temp=$buff % $MTUSIZE"
-    if [ "$temp" -gt 0 ]; then
-        let "buff=$buff + ($MTUSIZE - $temp)"
-    fi
+    let "buff=($BANDWIDTH / 100)"
 
-    # ensure burst is atleast MTU size
-    if [ "$buff" -lt "$MTUSIZE" ]; then
-        buff=$MTUSIZE
-    fi
+    # ensure burst is always larger than MTU
 
-    # burst size hack
-    if [ "$BURST_HACK" -eq 1 ]; then
-        # this hack proved somewhat useful during my
-        # testing, so going to leave it in for now.
-
-        let "buff=$buff * 8"
+    if [ "$buff" -lt 2 ]; then
+        buff=2
     fi
 
     eval $1=\$buff
@@ -372,6 +354,10 @@ do_set_latency()
     temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
 
     if [ ! -z "$temp" ]; then
+        if [ "$temp" -le 1 ]; then
+            temp=1
+        fi
+
         eval $1=\$temp
     else
         eval $1=\$LATENCY
@@ -386,6 +372,8 @@ do_set_variation()
     let "recc=$LATENCY / 10"
     if [ "$recc" -gt 1 ]; then
         let "recc=$recc - 1"
+    else
+        recc=1
     fi
 
     # dialogue
@@ -396,6 +384,10 @@ do_set_variation()
     temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
 
     if [ ! -z "$temp" ]; then
+        if [ "$temp" -le 1 ]; then
+            temp=1
+        fi
+
         eval $1=\$temp
     else
         eval $1=\$VARIATION
@@ -425,7 +417,7 @@ do_set_packet_loss_correlation()
     temp=
 
     # dialogue
-    show_text "Packet Loss Correlation %" "(Minimum percentage is 1)" "Packet Loss Correlation is applied to both interfaces" "This will set the successive probability after a packet loss"
+    show_page "Packet Loss Correlation %" "(Minimum percentage is 1)" "Packet Loss Correlation is applied to both interfaces" "This will set the successive probability after a packet loss"
     show_diag ">"
     user_read temp
 
@@ -461,7 +453,7 @@ do_set_packet_duplication_correlation()
     temp=
 
     # dialogue
-    show_text "Packet Duplication Correlation %" "(Minimum percentage is 1)" "Packet Duplication Correlation is applied to both interfaces" "This will set the successive probability after a duplicate packet"
+    show_page "Packet Duplication Correlation %" "(Minimum percentage is 1)" "Packet Duplication Correlation is applied to both interfaces" "This will set the successive probability after a duplicate packet"
     show_diag ">"
     user_read temp
     
@@ -497,7 +489,7 @@ do_set_packet_corruption_correlation()
     temp=
 
     # dialogue
-    show_text "Packet Corruption Correlation %" "(Minimum percentage is 1)" "Packet Corruption Correlation is applied to both interfaces" "This will set the successive probability after a corrupt packet"
+    show_page "Packet Corruption Correlation %" "(Minimum percentage is 1)" "Packet Corruption Correlation is applied to both interfaces" "This will set the successive probability after a corrupt packet"
     show_diag ">"
     user_read temp
 
@@ -515,7 +507,7 @@ do_set_packet_reorder()
     temp=
 
     # dialogue
-    show_text "Packet Re-Order %" "(Minimum percentage is 0.0000001)" "Packet Re-Order is applied to both interfaces" "The actual rate of reordering is double this value"
+    show_page "Packet Re-Order %" "(Minimum percentage is 0.0000001)" "Packet Re-Order is applied to both interfaces" "The actual rate of reordering is double this value"
     show_diag ">"
     user_read temp
 
@@ -533,7 +525,7 @@ do_set_packet_reorder_correlation()
     temp=
 
     # dialogue
-    show_text "Packet Re-Order Correlation %" "(Minimum percentage is 1)" "Packet Re-Order Correlation is applied to both interfaces" "This will set the successive probability after a reordered packet"
+    show_page "Packet Re-Order Correlation %" "(Minimum percentage is 1)" "Packet Re-Order Correlation is applied to both interfaces" "This will set the successive probability after a reordered packet"
     show_diag ">"
     user_read temp
 
@@ -572,7 +564,7 @@ do_about()
 {
     show_page \
         "" \
-        "WANsim ${WANSIMVERS} by Ferry Hendrikx (c) 2008-2011" \
+        "WANsim ${WANSIMVERS} by Ferry Hendrikx (c) 2008-2014" \
         "" \
         "http://wansim.googlecode.com/" \
         "" \
@@ -648,23 +640,19 @@ while [ $quit -eq 0 ]; do
             "(5) Bridge Mask ($BRIDGEMASK)"
     else
         show_list \
-            "(w) Router Interface ($AFFECT)" \
+            "(I) Router Interface ($AFFECT)" \
             "(f) Router IP forwarding ($IPF)"
     fi
 
     show_list \
         "(m) MTU Size ($MTUSIZE bytes)" \
-        "(b) WAN Bandwidth ($BANDWIDTH kbit/s)" \
+        "(b) WAN Bandwidth ($BANDWIDTH Kbit/s)" \
         "(l) WAN Latency ($LATENCY ms)" \
         "(v) WAN Variation ($VARIATION ms)" \
-        "(L) WAN Packet Loss ($PKTLOSS %)" \
-        "(D) WAN Packet Duplication ($PKTDUPL %)" \
-        "(C) WAN Packet Corruption ($PKTCORR %)" \
-        "(O) WAN Packet Re-Order ($PKTORDR %)" \
-        "(K) WAN Packet Loss Correlation ($PKTLOSSCOR %)" \
-        "(S) WAN Packet Duplication Correlation ($PKTDUPLCOR %)" \
-        "(F) WAN Packet Corruption Correlation ($PKTCORRCOR %)" \
-        "(I) WAN Packet Re-Order Correlation ($PKTORDRCOR %)" \
+        "(L) WAN Packet Loss ($PKTLOSS %, corr $PKTLOSSCOR %)" \
+        "(C) WAN Packet Corruption ($PKTCORR %, corr $PKTCORRCOR %)" \
+        "(D) WAN Packet Duplication ($PKTDUPL %, corr $PKTDUPLCOR %)" \
+        "(O) WAN Packet Re-Ordering ($PKTORDR %, corr $PKTORDRCOR %)" \
         "(i) WAN Information" \
         "(d) WANsim Configuration Load" \
         "(s) WANsim Configuration Save" \
@@ -701,7 +689,7 @@ while [ $quit -eq 0 ]; do
         5)
             do_set_mask BRIDGEMASK
         ;;
-        w)
+        I)
             do_set_affected
         ;;
         f)
@@ -709,7 +697,6 @@ while [ $quit -eq 0 ]; do
         ;;
         m|M)
             do_set_mtusize MTUSIZE
-            do_set_burst BURST
         ;;
         b)
             do_set_bandwidth BANDWIDTH
@@ -724,26 +711,18 @@ while [ $quit -eq 0 ]; do
         ;;
         L)
             do_set_packet_loss PKTLOSS
+            do_set_packet_loss_correlation PKTLOSSCOR
         ;;
         D)
             do_set_packet_duplication PKTDUPL
+            do_set_packet_duplication_correlation PKTDUPLCOR
         ;;
         C)
             do_set_packet_corruption PKTCORR
+            do_set_packet_corruption_correlation PKTCORRCOR
         ;;
         O)
             do_set_packet_reorder PKTORDR
-        ;;
-        K)
-            do_set_packet_loss_correlation PKTLOSSCOR
-        ;;
-        S)
-            do_set_packet_duplication_correlation PKTDUPLCOR
-        ;;
-        F)
-            do_set_packet_corruption_correlation PKTCORRCOR
-        ;;
-        I)
             do_set_packet_reorder_correlation PKTORDRCOR
         ;;
         i)
@@ -762,7 +741,7 @@ while [ $quit -eq 0 ]; do
         a|A)
             do_about
         ;;
-        q|Q|x|X)
+        q|Q|x|X|z|Z)
             quit=1
         ;;
         *)
