@@ -1,3 +1,12 @@
+wansim (2.1.0-1) unstable; urgency=low
+
+  * Major new release
+  * Fixed WANsim init.d script to build qdiscs in proper order
+  * Fixed calculation of burst sizes
+  * This release was extensively tested (thanks Stuart)
+
+ -- Ferry Hendrikx <ferry.hendrikx@gmail.com>  Mon,  6 Oct 2014 12:00:00 +1200
+
 wansim (2.0.1-1) unstable; urgency=low
 
   * Fixed WANsim init.d script (some paths have changed)
