@@ -354,8 +354,8 @@ do_set_latency()
     temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
 
     if [ ! -z "$temp" ]; then
-        if [ "$temp" -le 1 ]; then
-            temp=1
+        if [ "$temp" < 0 ]; then
+            temp=0
         fi
 
         eval $1=\$temp
@@ -373,19 +373,19 @@ do_set_variation()
     if [ "$recc" -gt 1 ]; then
         let "recc=$recc - 1"
     else
-        recc=1
+        recc=0
     fi
 
     # dialogue
-    show_page "Variation (ms)" "(Recommended maximum variation of $recc ms)"
+    show_page "Variation (ms)" "(Based on Latency, recommended maximum variation of $recc ms)"
     show_diag ">"
     user_read temp
 
     temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
 
     if [ ! -z "$temp" ]; then
-        if [ "$temp" -le 1 ]; then
-            temp=1
+        if [ "$temp" < 0 ]; then
+            temp=0
         fi
 
         eval $1=\$temp
@@ -576,6 +576,9 @@ do_about()
         "Router mode:" \
         "Please note that all values are applied only to the router" \
         "interface." \
+        "" \
+        "Please note: if you're having trouble obtaining the right " \
+        "speeds, consider turning off GRO on your interfaces.      " \
         ""
 
     user_wait "Press any key"
@@ -627,10 +630,10 @@ while [ $quit -eq 0 ]; do
     show_scrn
 
     show_list \
-        "(t) Type of system ($TYPE)" \
+        "(t) Type of System ($TYPE)" \
         "(V) Verbose ($VERBOSE)" \
-        "(0) Interface 0 ($IFACE0)" \
-        "(1) Interface 1 ($IFACE1)"
+        "(0) Set Interface 0 ($IFACE0)" \
+        "(1) Set Interface 1 ($IFACE1)"
 
     if [ $TYPE == "bridge" ]; then
         show_list \
@@ -724,6 +727,21 @@ while [ $quit -eq 0 ]; do
         O)
             do_set_packet_reorder PKTORDR
             do_set_packet_reorder_correlation PKTORDRCOR
+
+            if (( $(bc <<< "$PKTORDR > 0") == 1 )); then
+                if (( $(bc <<< "$LATENCY < 1") == 1 )); then
+                    do_set_latency LATENCY
+                    do_set_variation VARIATION
+
+                    if (( $(bc <<< "$LATENCY < 1") == 1 )); then
+                        LATENCY=1
+                    fi
+
+                    if (( $(bc <<< "$VARIATION < 1") == 1 )); then
+                        VARIATION=1
+                    fi
+                fi
+            fi
         ;;
         i)
             do_information

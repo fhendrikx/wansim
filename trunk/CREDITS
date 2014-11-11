@@ -2,4 +2,5 @@ Ferry Hendrikx <ferry.hendrikx@gmail.com> - Project creator and principle author
 Sebastian Ahndorf <withheld> - Added correlation settings and new qdisc behaviour
 Tino Svatek <withheld> - Noted that some util paths had changed from /usr/sbin to /sbin
 Stuart Kendrick <withheld> - Extensive testing and improvements
+Shedenig <withheld> - Fixes to wansimsetup and GRO observation
 

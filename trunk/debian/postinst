@@ -8,7 +8,11 @@ set -e
 
 # add WANsim user
 
-adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim || exit $?
+id -u wansim > /dev/null
+
+if [ $? -eq 1 ]; then
+    adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim || exit $?
+fi
 
 chown -R wansim:wansim /var/lib/wansim
 chmod -R u+rw /var/lib/wansim
@@ -38,10 +42,7 @@ cp -f /usr/share/doc/wansim/examples/* ${DEST}/
 chown wansim:wansim ${DEST}/*
 
 
-# fix for WANsim 1.4
-
-# The interfaces.conf file is now loaded and used if it exists 
-# (in previous versions this file always existed)
+# interfaces file has changed
 
 if [ -e "${DEST}/interfaces.conf" ]; then
     mv -f ${DEST}/interfaces.conf ${DEST}/interfaces.conf.old
