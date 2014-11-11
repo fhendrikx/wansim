@@ -8,11 +8,7 @@ set -e
 
 # add WANsim user
 
-id -u wansim > /dev/null
-
-if [ $? -eq 1 ]; then
-    adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim || exit $?
-fi
+adduser --system --group --shell /usr/sbin/wansimsetup --home /var/lib/wansim wansim
 
 chown -R wansim:wansim /var/lib/wansim
 chmod -R u+rw /var/lib/wansim
@@ -30,7 +26,7 @@ fi
 # add WANsim init.d script
 
 if [ -x "/etc/init.d/wansim" ]; then
-	update-rc.d wansim start 10 2 3 4 5 . stop 60 0 . || exit $?
+	update-rc.d wansim start 10 2 3 4 5 . stop 60 0 .
 fi
 
 

@@ -5,16 +5,24 @@ wansimsetup \- Program that controls WANSIM configuration parameters.
 .LP
 .B wansimsetup
 .SH DESCRIPTION
-wansimsetup manipulates the configuration information used by WANSIM. It
+WANsimsetup manipulates the configuration information used by WANsim. It
 provides a simple menu interface that allows you to alter any of the 
 emulated WAN parameters, including bandwidth (in kbit/s), latency and
-jitter (in ms).
+variation (in ms).
+
+WANsimsetup does not save settings unless you explicitly ask it to save
+your settings. This allows you to simply quit if you make mistakes when
+entering settings.
+
+Further, setting changes do NOT take effect until they have been saved
+and WANsim has been restarted. WANsim can be restarted either by using
+the restart option in the menu, or by rebooting the host.
 .SH SEE ALSO
 .BR wansim (8)
 .LP
 Homepage: http://wansim.googlecode.com/
 .SH AUTHOR
-WANSIM was developed by Ferry Hendrikx <ferry.hendrikx@gmail.com>.
+WANsim was developed by Ferry Hendrikx <ferry.hendrikx@gmail.com>.
 .PP
-This manual page was written by Ferry Hendrikx for the WANSIM project, 
+This manual page was written by Ferry Hendrikx for the WANsim project, 
 and may be used by anyone.
