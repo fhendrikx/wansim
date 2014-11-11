@@ -1,0 +1,28 @@
+.TH WANSIMSETUP "8" "2.1.0" "Ferry Hendrikx"
+.SH NAME
+wansimsetup \- Program that controls WANSIM configuration parameters.
+.SH "SYNTAX"
+.LP
+.B wansimsetup
+.SH DESCRIPTION
+WANsimsetup manipulates the configuration information used by WANsim. It
+provides a simple menu interface that allows you to alter any of the 
+emulated WAN parameters, including bandwidth (in kbit/s), latency and
+variation (in ms).
+
+WANsimsetup does not save settings unless you explicitly ask it to save
+your settings. This allows you to simply quit if you make mistakes when
+entering settings.
+
+Further, setting changes do NOT take effect until they have been saved
+and WANsim has been restarted. WANsim can be restarted either by using
+the restart option in the menu, or by rebooting the host.
+.SH SEE ALSO
+.BR wansim (8)
+.LP
+Homepage: http://wansim.googlecode.com/
+.SH AUTHOR
+WANsim was developed by Ferry Hendrikx <ferry.hendrikx@gmail.com>.
+.PP
+This manual page was written by Ferry Hendrikx for the WANsim project, 
+and may be used by anyone.
