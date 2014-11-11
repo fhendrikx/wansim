@@ -1,6 +1,15 @@
 #labels Phase-Support,Featured
 = News =
 
+*Nov 12th 2014*
+
+WANsim Release 2.1.0-1 is out. 
+
+This release fixes a number of issues, including the burst size calculation, handling of floats, and slight changes to the handling of the NETEM options during interface stand-up.
+
+If you are having issues with getting the performance you expected, please consider creating the /var/lib/wansim/interfaces.conf file and setting the IFxGRO option to "Off". A template version of the configuration file is provided in that same directory that you can copy. This issue has been seen on Intel e1000e NICs but may affect others.
+
+
 *Feb 11th 2013*
 
 WANsim Release 2.0.1-1 is out.
