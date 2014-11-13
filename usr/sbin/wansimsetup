@@ -354,10 +354,6 @@ do_set_latency()
     temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
 
     if [ ! -z "$temp" ]; then
-        if [ "$temp" < 0 ]; then
-            temp=0
-        fi
-
         eval $1=\$temp
     else
         eval $1=\$LATENCY
@@ -384,10 +380,6 @@ do_set_variation()
     temp=`echo $temp | tr -d '[:alpha:][:punct:][:space:][:cntrl:]'`
 
     if [ ! -z "$temp" ]; then
-        if [ "$temp" < 0 ]; then
-            temp=0
-        fi
-
         eval $1=\$temp
     else
         eval $1=\$VARIATION
