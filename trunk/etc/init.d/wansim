@@ -179,7 +179,11 @@ do_start () {
     NETEMOPTS=""
 
     if (( $(bc <<< "$LATENCY > 0") == 1 )); then
-        NETEMOPTS="delay ${LATENCY}ms ${VARIATION}ms distribution normal";
+        NETEMOPTS="delay ${LATENCY}ms";
+
+        if (( $(bc <<< "$VARIATION > 0") == 1 )); then
+            NETEMOPTS="${NETEMOPTS} ${VARIATION}ms distribution normal";
+        fi
     fi
 
     if (( $(bc <<< "$PKTLOSS > 0") == 1 )); then
