@@ -1,6 +1,13 @@
 #labels Phase-Support,Featured
 = News =
 
+*Nov 15th 2014*
+
+WANsim Release 2.1.1-1 is out. 
+
+This release fixes an issue where a zero variance was causing the NETEM options to be incorrectly created and applied.
+
+
 *Nov 12th 2014*
 
 WANsim Release 2.1.0-1 is out. 
