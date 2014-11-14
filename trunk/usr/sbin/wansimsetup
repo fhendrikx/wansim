@@ -1,7 +1,7 @@
 #!/bin/bash
 ############################################################
 #
-# WANsim Setup v2.1.0 by Ferry Hendrikx, (c) 2008-2014
+# WANsim Setup v2.1.1 by Ferry Hendrikx, (c) 2008-2014
 #
 ############################################################
 
@@ -17,7 +17,7 @@ PROG_TC=`which tc`
 # where to find my configuration file
 
 WANSIMCONF="/var/lib/wansim/wansim.conf"
-WANSIMVERS="v2.1.0"
+WANSIMVERS="v2.1.1"
 
 
 ############################################################

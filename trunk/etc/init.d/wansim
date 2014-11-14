@@ -1,7 +1,7 @@
 #!/bin/bash
 ######################################################################
 #
-# WANsim v2.1.0 by Ferry Hendrikx, (c) 2008-2014
+# WANsim v2.1.1 by Ferry Hendrikx, (c) 2008-2014
 #
 # chkconfig: 2345 10 60
 # description: WANsim provides an emulated WAN on your Linux server
