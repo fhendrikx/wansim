@@ -1,0 +1,40 @@
+.TH WANSIM "8" "2.1.1" "Ferry Hendrikx"
+.SH NAME
+wansim \- init.d script that establishes an emulated WAN connection.
+.SH "SYNTAX"
+.LP
+.B wansim
+.SH DESCRIPTION
+WANsim provides a simple, inline bridge that allows you to emulate a 
+WAN connection. Simply ensure that your Linux box has 2 NICs and place 
+it between your "local" and "remote" locations. WANsim allows you to 
+change the WAN speed (in kbit/s) and the latency (in ms) of the data 
+passing over the emulated WAN connection. WANsim will also allow you 
+to introduce errors (such as packet corruption, loss and duplication).
+
+If you require specific settings for your interfaces, consider creating
+the interfaces.conf file and populating it. WANsim will detect the file
+and use it to configure your interfaces. A template is provided that
+you can customise.
+
+If you are experiencing issues related to performance not matching what
+you expect, make sure GRO is "off" in the interfaces.conf file for each
+of your interfaces.
+.SH SEE ALSO
+.BR wansimsetup (8)
+.BR tc (8)
+.LP
+Homepage: http://wansim.googlecode.com/
+.SH FILES
+/etc/init.d/wansim
+.LP
+/usr/sbin/wansimsetup
+.LP
+/var/lib/wansim/interfaces.conf
+.LP
+/var/lib/wansim/wansim.conf
+.SH AUTHOR
+WANsim was developed by Ferry Hendrikx <ferry.hendrikx@gmail.com>.
+.PP
+This manual page was written by Ferry Hendrikx for the WANsim project, 
+and may be used by anyone.
