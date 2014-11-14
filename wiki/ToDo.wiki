@@ -5,20 +5,10 @@ The following is my TODO list. If anyone has any other suggestions, please let m
 
 === WANsim ===
 
-  * Consider: Packet re-ordering support. Not sure if this is really needed because setting a large jitter value will cause packets to be send out of order. See [http://www.linuxfoundation.org/en/Net:Netem#Packet_re-ordering] for more information.
+  * Add: per-NIC support for key settings so that we can have unbalanced line emulation
 
 
 === WANsim setup ===
 
   * Add: Show/Hide the (r)estart option if sudoers is/is not available
   * Add: Resilience to wansim setup script (allow alternative init.d invoke methods)
-
-
-=== WANsim packaging ===
-
-  * Fix: Generic install script enhancements.
-
-
-=== Other ===
-
-  * Fix: Test package on other platforms (e.g. Voyager)
