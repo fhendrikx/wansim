@@ -272,18 +272,14 @@ do_stop () {
 
     # bring down iface0
 
-    if [ $AFFECT != "both" ] && [ $AFFECT = $IFACE0 ] || [ $AFFECT = "both" ]; then
-        [ $VERBOSE = "no" ] || log_msg "Unconfiguring $IFACE0"
-        $PROG_TC qdisc del dev ${IFACE0} root
-    fi
+    [ $VERBOSE = "no" ] || log_msg "Unconfiguring $IFACE0"
+    $PROG_TC qdisc del dev ${IFACE0} root
 
 
     # bring down iface1
 
-    if [ $AFFECT != "both" ] && [ $AFFECT = $IFACE1 ] || [ $AFFECT = "both" ]; then
-        [ $VERBOSE = "no" ] || log_msg "Unconfiguring $IFACE1"
-        $PROG_TC qdisc del dev ${IFACE1} root
-    fi
+    [ $VERBOSE = "no" ] || log_msg "Unconfiguring $IFACE1"
+    $PROG_TC qdisc del dev ${IFACE1} root
 
 
     # bring down bridge
