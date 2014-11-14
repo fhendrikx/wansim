@@ -7,39 +7,31 @@
 
 I wanted a simple, easy to remember name. Obviously it needed to feature the word *WAN*. Simulation came about because I was simulating a real WAN. Of course, the term I should really have used is _emulation_. 
 
-Unfortunately, it's a little late to change it now.
+Unfortunately, it's a little late to change it now.   :)
 
 
 *What's the deal with certain settings being doubled? *
 
-All of the settings in WANsim are applied to both interfaces. Some of these parameters may have a culmulative effect, meaning that it is added once for each interface. For example, if you set a latency of 15ms in the WANsim interface, your actual latency will be 30ms (15ms for interface 0 + 15ms for interface 1).
+In bridging mode, all of the settings in WANsim are applied to both interfaces. Some of these parameters may have a culmulative effect, meaning that it is added once for each interface. For example, if you set a latency of 15ms in the WANsim interface, your actual latency will be 30ms (15ms for interface 0 + 15ms for interface 1).
 
 The affected settings are clearly indicated in the WANsim interface.
-
-_WANsim 1.5-1 and above_
 
 Affected settings:
  * Latency and variation
  * Packet loss
  * Packet corruption
  * Packet duplication
-
-_WANsim 1.4-1 and below_
-
-Affected settings:
- * Packet loss
- * Packet corruption
- * Packet duplication
+ * Packet re-ordering
 
 
 *What do the Packet loss, corruption and duplication values actually mean?*
 
-These values control the percentage of packets that are dropped, corrupted or duplicated respectively. For example, setting 1% packet loss would cause 1 in 100 packets to be dropped. Similarly, setting 0.1% packet loss would cause 1 in 1000 packets to be dropped. The smallest value possible is 0.0000000232% (which is 2^32^). 
+These values control the percentage of packets that are dropped, corrupted or duplicated respectively. For example, setting 1% packet loss would cause 1 in 100 packets to be dropped. Similarly, setting 0.1% packet loss would cause 1 in 1000 packets to be dropped. The smallest value possible is 0.0000000232% (which is 2^32^).
 
 
 *Is packet re-ordering supported?*
 
-Setting large latency and variation (jitter) values will cause packets to be sent out of order. Please read the following section about [http://www.linuxfoundation.org/en/Net:Netem#Packet_re-ordering packet re-ordering] for more information. You should however note that this feature requires a recent 2.6 kernel. 
+Yes, you can set packet re-ordering in the WANsim interface. However, re-ordering also requires that you set some latency and variation.
 
 
 *Does the menu still fit into an 80x25 console?*
@@ -56,7 +48,7 @@ Why not? I could have used Perl, but bash is more widely available, especially o
 
 *What kernel do I need?*
 
-You need a relatively recent Linux kernel. Any recent 2.6+ Linux kernel should do the trick.
+You need a relatively recent Linux kernel. Any 2.6+ Linux kernel should do the trick.
 
 
 *What modules do I need to enable/compile in my kernel?*
@@ -81,22 +73,21 @@ Strictly speaking you don't actually need sudoers to be installed. However, the 
 There isn't one. You need to set the password for the wansim user after you've installed the package. Use the UNIX _passwd_ command to do that. 
 
 
+*Why doesn't the change I made in the WANsim interface take immediate effect?*
+
+The intention with the interface was that changes are not saved until you explicitly save them. As a direct result of that design decision, your changes don't take effect until you've saved your changes and either restarted WANsim or rebooted the host.
+
+
 == Hardware ==
 
 *What network cards can I use with WANsim?*
 
-You should be able to use any standard network card that can be put into _promiscuous mode_. This will unfortunately rule out many wireless network cards as they don't interact nicely with the kernel bridging code (it requires promiscuous mode).
+You should be able to use any standard network card that can be put into _promiscuous mode_. This will unfortunately rule out many wireless network cards as they don't interact nicely with the kernel bridging code (it requires promiscuous mode). Recently, it was noted that some Intel e1000e NICs have issues under Debian 7. This can be resolved by setting GRO off in the interfaces.conf file (see the next point for how to set this up).
 
 
-*How do I set my interfaces to 10/100/1000, Half/Full Duplex, etc?*
+*How do I set my interfaces to 10/100/1000, Half/Full Duplex, GRO, etc?*
 
-_WANsim 1.4-1 and above_
-
-Simply copy the sample `interfaces.conf.sample` and call it `/var/lib/wansim/interfaces.conf`. Set the two interfaces to what you require. These interface settings will be applied at every boot by the wansim init.d script. Simply deleting this file ensures that the settings are no longer applied.
-
-_WANsim 1.3-2 and below_
-
-Simply edit `/var/lib/wansim/interfaces.conf` and set the two interfaces to what you require. You will also need to make `SETINTS=1`. These interface settings will be applied at every boot by the wansim init.d script. Setting `SETINTS=0` will leave the interfaces unchanged. This is the default behaviour.
+Copy the file /var/lib/wansim/interfaces.conf.sample to just interfaces.conf. Edit the file to suit your needs. On WANsim restart, it will detect the file and apply the settings. Deleting this file ensures that the settings are no longer applied.
 
 
 *What is the maximum emulated network speed you can achieve?*
